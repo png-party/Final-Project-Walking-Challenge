@@ -18,6 +18,23 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ChallengeManager.h" />
+    <ClInclude Include="Hood.h" />
+    <ClInclude Include="LinkedList.h" />
+    <ClInclude Include="Node.h" />
+    <ClInclude Include="Person.h" />
+    <ClInclude Include="WalkData.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ChallengeManager.cpp" />
+    <ClCompile Include="Hood.cpp" />
+    <ClCompile Include="LinkedList.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Node.cpp" />
+    <ClCompile Include="Person.cpp" />
+    <ClCompile Include="WalkData.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -122,19 +139,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="ChallengeManager.cpp" />
-    <ClCompile Include="Hood.cpp" />
-    <ClCompile Include="LinkedList.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Person.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="ChallengeManger.h" />
-    <ClInclude Include="Hood.h" />
-    <ClInclude Include="LinkedList.h" />
-    <ClInclude Include="Person.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
