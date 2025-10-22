@@ -9,15 +9,14 @@ class Node
 {
 public:
 
-	Node(const T& obj);
-	T getObj();
-private:
-	T obj;
 	Node* next;
 	Node* previous;
 	WalkData x;
 	Node(WalkData item);
 };
+
+
+
 
 
 #endif NODE_H
