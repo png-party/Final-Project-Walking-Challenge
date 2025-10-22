@@ -3,6 +3,6 @@
 #define CHALLENGEMANAGER_H
 class ChallengeManager
 {
-
+	
 };
 #endif
