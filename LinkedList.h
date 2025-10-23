@@ -15,6 +15,8 @@ public:
 
 	/*Getters and setters*/
 	int getNoe() const;
+	Node* getFirst() const;
+	Node* getLast() const;
 
 	/*==The Big 5==*/
 	//Copy constructor
@@ -29,7 +31,7 @@ public:
 	LinkedList& operator=(LinkedList&& RHS);
 
 
-	void addNode(const WalkData& data);
+	void addNode(WalkData* data);
 	//void addNode(const Node<WalkData>& data);
 
 private:

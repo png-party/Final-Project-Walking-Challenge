@@ -12,6 +12,16 @@ int LinkedList::getNoe() const
 	return noe;
 }
 
+Node* LinkedList::getFirst() const
+{
+	return first;
+}
+
+Node* LinkedList::getLast() const
+{
+	return last;
+}
+
 LinkedList::LinkedList(const LinkedList& other)
 {
 }
@@ -35,37 +45,7 @@ LinkedList& LinkedList::operator=(LinkedList&& RHS)
 }*/
 
 
-/*
-void LinkedList::addNode(const Node<WalkData>& data)
-{
-	if (noe == 0)
-	{
-		Node<WalkData>* temp = new Node<WalkData>(data);
-		if (temp)
-		{
-			first = temp;
-			temp = nullptr;
-			last = first;
-			noe++;
-
-		}
-		else cout << "Memory could not be allocated" << endl;
-	}
-	else
-	{
-		Node<WalkData>* temp = new Node<WalkData>(data);
-		if (temp)
-		{
-			temp->previous = last;
-			last->next = temp;
-			noe++;
-		}
-		else cout << "Memory could not be allocated" << endl;
-	}
-}
-*/
-
-void LinkedList::addNode(const WalkData& data)
+void LinkedList::addNode(WalkData* data)
 {
 	if (noe == 0)
 	{
