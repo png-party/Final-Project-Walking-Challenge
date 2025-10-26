@@ -7,6 +7,13 @@ ChallengeManager::ChallengeManager()
 	cout << "Creating challenge manager instance" << endl;
 }
 
+ChallengeManager::~ChallengeManager()
+{
+	people.clear();
+	cities.clear();
+	cout << "Calling destructor" << endl;
+}
+
 WalkData* ChallengeManager::findItem(const string& userName, const LinkedList& list) 
 {
 	Node* current = list.getFirst();

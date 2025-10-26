@@ -13,10 +13,12 @@ public:
 	WalkData();
 	WalkData(string itemName);
 	WalkData(string itemName, int itemMiles);
+	virtual ~WalkData();
 	string getName() const;
 	int getTotalMiles() const;
 	void setName(string newName);
 	void setTotalMiles(int miles);
+
 	virtual void writeToStream(ostream& out) const;
 	friend ostream& operator<<(ostream& out, WalkData* log);
 

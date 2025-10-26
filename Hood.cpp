@@ -7,9 +7,34 @@ Hood::Hood()
 	cout << "Creating a default neighborhood object" << endl;
 }
 //--------------------------------------------------------------
-Hood::Hood(string cityName) : WalkData(cityName)
+Hood::Hood(const string& cityName) : WalkData(cityName)
 {
 	cout << "Creating neighborhood object" << endl;
+}
+
+Hood::Hood(const Hood& other)
+{
+	name = other.name;
+	totalMiles = other.totalMiles;
+	hoodList = LinkedList(other.hoodList);
+}
+
+Hood& Hood::operator=(const Hood& RHS)
+{
+	if (this != &RHS)
+	{
+		name = RHS.name;
+		totalMiles = RHS.totalMiles;
+		hoodList = LinkedList(RHS.hoodList);
+	}
+	else cout << "Attempting self-assignment!" << endl;
+	return *this;
+}
+
+Hood::~Hood()
+{
+	hoodList.clear();
+	cout << "Calling derived class destructor" << endl;
 }
 //--------------------------------------------------------------
 LinkedList& Hood::getList()

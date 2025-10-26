@@ -10,6 +10,7 @@ class ChallengeManager
 public:
 
 	ChallengeManager();
+	~ChallengeManager();
 	WalkData* findItem(const string& userName, const LinkedList& list);
 
 };

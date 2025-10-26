@@ -21,6 +21,10 @@ WalkData::WalkData(string itemName, int itemMiles)
 	totalMiles = itemMiles;
 	cout << "Creating walking activity log..." << endl;
 }
+ WalkData::~WalkData()
+{
+	 cout << "Calling base class destructor" << endl;
+}
 //----------------------------------------------------------
 string WalkData::getName() const
 {
@@ -42,6 +46,11 @@ void WalkData::setTotalMiles(int miles)
 	totalMiles = miles;
 }
 //----------------------------------------------------------
+	/*Virtual function to override in Person and Hood class.
+	 * Since you can't override a friend function, to "override"
+	 * the stream insertion operator, we had to make a helper function
+	 * that gets called in the overloaded operator function that
+	 * can be overridden*/
 void WalkData::writeToStream(ostream& out) const
 {
 	out << "Name: " << getName() << ", Miles: " << getTotalMiles() << endl;

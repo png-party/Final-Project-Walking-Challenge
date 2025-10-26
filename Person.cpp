@@ -12,7 +12,31 @@ Person::Person(string personName) : WalkData(personName)
 {
 	cout << "Creating person object..." << endl;
 }
+
+Person::Person(const Person& other)
+{
+    name = other.name;
+    totalMiles = other.totalMiles;
+    personList = LinkedList(other.personList);
+}
+
+Person& Person::operator=(const Person& RHS)
+{
+    if (this != &RHS)
+    {
+        name = RHS.name;
+        totalMiles = RHS.totalMiles;
+        personList = LinkedList(RHS.personList);
+    }
+    else cout << "Attempting self-assignment!" << endl;
+    return *this;
+}
+
 //-----------------------------------------------------------
+Person::~Person() {
+    personList.clear();
+    cout << "Calling derived class destructor " << endl;
+}
 void Person::walk(WalkData* city, int miles)
 {
     totalMiles += miles;
@@ -67,5 +91,4 @@ ostream& operator<<(ostream& out, const Person* human)
 {
 	human->writeToStream(out);
 	return out;
-	//return human.writeToStream(out);
 }

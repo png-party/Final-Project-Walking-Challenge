@@ -2,7 +2,6 @@
 #include <iostream>
 using namespace std;
 
-
 LinkedList::LinkedList()
 {
 	first = nullptr;
@@ -25,19 +24,21 @@ Node* LinkedList::getLast() const
 	return last;
 }
 //--------------------------------------------------
+/*Copy Constructor*/
 LinkedList::LinkedList(const LinkedList& other)
 {
-	first = nullptr;
-	last = nullptr;
-	noe = 0;
+
+	noe = other.noe;
 	
 	Node* current = other.first;
-	while (current != nullptr)
+	first = current;
+	while (current)
 	{
 		WalkData* copyData = new WalkData(*current->getItem());
 		addNode(copyData);
 		current = current->next;
-	}	
+	}
+	last = current;
 }
 //--------------------------------------------------
 LinkedList& LinkedList::operator=(const LinkedList& RHS)
@@ -62,6 +63,7 @@ LinkedList::~LinkedList()
 	clear();
 }
 //--------------------------------------------------
+/*Move Constructor*/
 LinkedList::LinkedList(LinkedList&& RHS)
 {
 	first = RHS.first;
@@ -73,12 +75,11 @@ LinkedList::LinkedList(LinkedList&& RHS)
 	RHS.noe = 0;
 }
 //--------------------------------------------------
+/*Move assignment operator*/
 LinkedList& LinkedList::operator=(LinkedList&& RHS)
 {
 	if (this != &RHS)
 	{
-		clear();
-
 		first = RHS.first;
 		last = RHS.last;
 		noe = RHS.noe;
@@ -87,6 +88,7 @@ LinkedList& LinkedList::operator=(LinkedList&& RHS)
 		RHS.last = nullptr;
 		RHS.noe = 0;
 	}
+	else cout << "Attempting self-assignment" << endl;
 	return *this;
 }
 //--------------------------------------------------
@@ -102,8 +104,7 @@ void LinkedList::addNode(WalkData* data)
 			last = first;
 			noe++;
 
-		}
-		else cout << "Memory could not be allocated" << endl;
+		} else cout << "Memory could not be allocated" << endl;
 	}
 	else
 	{
@@ -115,8 +116,7 @@ void LinkedList::addNode(WalkData* data)
 			last = temp;
 			temp = nullptr; //idk if this is redundant
 			noe++;
-		}
-		else cout << "Memory could not be allocated" << endl;
+		} else cout << "Memory could not be allocated" << endl;
 	}
 }
 //--------------------------------------------------

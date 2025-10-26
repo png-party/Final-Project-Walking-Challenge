@@ -14,8 +14,10 @@ class Hood : public WalkData
 public:
 	/*Constructors*/
 	Hood();
-	Hood(string cityName);
-
+	Hood(const string& cityName);
+	Hood(const Hood& other);
+	Hood& operator=(const Hood& RHS);
+	~Hood() override;
 	//logs person's walk in respective hood
 	void logWalk(const string& personName, int miles);
 
@@ -27,7 +29,7 @@ public:
 	void writeToStream(ostream& out) const override;
 
 	//Overloaded stream insertion operator
-	friend ostream& operator<<(ostream& out, const Hood& human);
+	friend ostream& operator<<(ostream& out, const Hood& city);
 
 
 };
