@@ -36,7 +36,7 @@ LinkedList::LinkedList(const LinkedList& other)
 	{
 		WalkData* copyData = new WalkData(*current->getItem());
 		addNode(copyData);
-		current = current->next();
+		current = current->next;
 	}	
 }
 //--------------------------------------------------
@@ -51,7 +51,7 @@ LinkedList& LinkedList::operator=(const LinkedList& RHS)
 		while (current != nullptr)
 		{
 			addNode(new WalkData(*current->getItem()));
-			current = current->next();
+			current = current->next;
 		}
 	}
 	return *this;
@@ -174,7 +174,7 @@ void LinkedList::clear()
 	Node* current = first;
 	while (current)
 	{
-		Node* next = current->next();
+		Node* next = current->next;
 		delete current;
 		current = next;
 	}
