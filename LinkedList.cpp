@@ -5,46 +5,51 @@ using namespace std;
 
 LinkedList::LinkedList()
 {
+	first = nullptr;
+	last = nullptr;
+	noe = 0;
 }
-
+//--------------------------------------------------
 int LinkedList::getNoe() const
 {
 	return noe;
 }
-
+//--------------------------------------------------
 Node* LinkedList::getFirst() const
 {
 	return first;
 }
-
+//--------------------------------------------------
 Node* LinkedList::getLast() const
 {
 	return last;
 }
-
+//--------------------------------------------------
 LinkedList::LinkedList(const LinkedList& other)
 {
 }
+//--------------------------------------------------
 /*
 LinkedList& LinkedList::operator=(const LinkedList& RHS)
 {
 
 }*/
-
+//--------------------------------------------------
 LinkedList::~LinkedList()
 {
 }
-
+//--------------------------------------------------
 LinkedList::LinkedList(LinkedList&& RHS)
 {
 }
+//--------------------------------------------------
 /*
 LinkedList& LinkedList::operator=(LinkedList&& RHS)
 {
 
 }*/
 
-
+//--------------------------------------------------
 void LinkedList::addNode(WalkData* data)
 {
 	if (noe == 0)
