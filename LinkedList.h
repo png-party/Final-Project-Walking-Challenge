@@ -27,11 +27,12 @@ public:
 	~LinkedList();
 	//Move constructor
 	LinkedList(LinkedList&& RHS);
-	//Move operator
+	//Move assignment operator
 	LinkedList& operator=(LinkedList&& RHS);
 
-
+	bool removeNode(string name);   
 	void addNode(WalkData* data);
+	void clear();
 	//void addNode(const Node<WalkData>& data);
 
 private:
