@@ -27,7 +27,7 @@ void Person::walk(WalkData* city, int miles)
             current->x->setTotalMiles(current->x->getTotalMiles() + miles);
             break;
         }
-        current = current->getNext();
+        current = current->next;
     }
 
     // add new city if not found
