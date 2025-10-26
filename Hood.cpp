@@ -29,7 +29,7 @@ void Hood::logWalk(const string& personName, int miles)
 			totalMiles += miles;
 			return;
 		}
-		current = current->next();
+		current = current->next;
 	}
 
 	//add person
@@ -46,7 +46,7 @@ WalkData* Hood::getTopWalker() const
 		return nullptr;
 
 	Node* topWalker = current;
-	current = current->next();
+	current = current->next;
 
 	while (current)
 	{
@@ -54,7 +54,7 @@ WalkData* Hood::getTopWalker() const
 		{
 			topWalker = current;
 		}
-		current = current->next();
+		current = current->next;
 	}
 
 	return topWalker->x;
