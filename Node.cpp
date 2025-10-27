@@ -1,21 +1,16 @@
 #include "Node.h"
 #include "WalkData.h"
+
 using namespace std;
 
-Node::Node(WalkData* value)
+Node::Node(WalkData* itemData)
 {
 	previous = nullptr;
 	next = nullptr;
-	x = value;
+	data = itemData;
 }
 
-WalkData* Node::getItem() const
+WalkData* Node::getData() const
 {
-	return x;
+	return data;
 }
-
-
-
-
-
-

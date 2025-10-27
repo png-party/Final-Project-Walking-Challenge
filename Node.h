@@ -6,6 +6,7 @@
 #define NODE_H
 #include <string>
 #include "WalkData.h"
+
 using namespace std;
 
 class Node
@@ -13,13 +14,9 @@ class Node
 public:
 	Node* next;
 	Node* previous;
-	WalkData* x;
-	Node(WalkData* item);
-	WalkData* getItem() const;
+	WalkData* data; 
+	Node(WalkData* itemData); 
+	WalkData* getData() const; 
 };
-
-
-
-
 
 #endif NODE_H

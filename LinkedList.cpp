@@ -1,100 +1,97 @@
 #include "LinkedList.h"
 #include <iostream>
+
 using namespace std;
 
 LinkedList::LinkedList()
 {
 	first = nullptr;
 	last = nullptr;
-	noe = 0;
+	nodeCount = 0;
 }
-//--------------------------------------------------
-int LinkedList::getNoe() const
+
+int LinkedList::getNodeCount() const
 {
-	return noe;
+	return nodeCount;
 }
-//--------------------------------------------------
+
 Node* LinkedList::getFirst() const
 {
 	return first;
 }
-//--------------------------------------------------
+
 Node* LinkedList::getLast() const
 {
 	return last;
 }
-//--------------------------------------------------
-/*Copy Constructor*/
+
 LinkedList::LinkedList(const LinkedList& other)
 {
+	first = nullptr;
+	last = nullptr;
+	nodeCount = 0;
 
-	noe = other.noe;
-	
 	Node* current = other.first;
-	first = current;
 	while (current)
 	{
-		WalkData* copyData = new WalkData(*current->getItem());
+		WalkData* copyData = new WalkData(*current->getData());
 		addNode(copyData);
 		current = current->next;
 	}
-	last = current;
 }
-//--------------------------------------------------
-LinkedList& LinkedList::operator=(const LinkedList& RHS)
-{
-	if (this != &RHS)
-	{
-		//call clear function
-		clear();
 
-		Node* current = RHS.first;
+LinkedList& LinkedList::operator=(const LinkedList& other)
+{
+	if (this != &other)
+	{
+		clear();
+		Node* current = other.first;
 		while (current != nullptr)
 		{
-			addNode(new WalkData(*current->getItem()));
+			addNode(new WalkData(*current->getData()));
 			current = current->next;
 		}
 	}
 	return *this;
 }
-//--------------------------------------------------
+
 LinkedList::~LinkedList()
 {
 	clear();
 }
-//--------------------------------------------------
-/*Move Constructor*/
-LinkedList::LinkedList(LinkedList&& RHS)
-{
-	first = RHS.first;
-	last = RHS.last;
-	noe = RHS.noe;
 
-	RHS.first = nullptr;
-	RHS.last = nullptr;
-	RHS.noe = 0;
+LinkedList::LinkedList(LinkedList&& other)
+{
+	first = other.first;
+	last = other.last;
+	nodeCount = other.nodeCount;
+
+	other.first = nullptr;
+	other.last = nullptr;
+	other.nodeCount = 0;
 }
-//--------------------------------------------------
-/*Move assignment operator*/
-LinkedList& LinkedList::operator=(LinkedList&& RHS)
-{
-	if (this != &RHS)
-	{
-		first = RHS.first;
-		last = RHS.last;
-		noe = RHS.noe;
 
-		RHS.first = nullptr;
-		RHS.last = nullptr;
-		RHS.noe = 0;
+LinkedList& LinkedList::operator=(LinkedList&& other)
+{
+	if (this != &other)
+	{
+		clear();
+
+		first = other.first;
+		last = other.last;
+		nodeCount = other.nodeCount;
+
+		other.first = nullptr;
+		other.last = nullptr;
+		other.nodeCount = 0;
 	}
 	else cout << "Attempting self-assignment" << endl;
 	return *this;
 }
-//--------------------------------------------------
+
 void LinkedList::addNode(WalkData* data)
 {
-	if (noe == 0)
+	if (nodeCount == 0)
 	{
 		Node* temp = new Node(data);
 		if (temp)
@@ -102,9 +99,9 @@ void LinkedList::addNode(WalkData* data)
 			first = temp;
 			temp = nullptr;
 			last = first;
-			noe++;
-
-		} else cout << "Memory could not be allocated" << endl;
+			nodeCount++;
+		}
+		else cout << "Memory could not be allocated" << endl;
 	}
 	else
 	{
@@ -114,22 +111,23 @@ void LinkedList::addNode(WalkData* data)
 			temp->previous = last;
 			last->next = temp;
 			last = temp;
-			temp = nullptr; //idk if this is redundant
-			noe++;
-		} else cout << "Memory could not be allocated" << endl;
+			temp = nullptr;
+			nodeCount++;
+		}
+		else cout << "Memory could not be allocated" << endl;
 	}
 }
-//--------------------------------------------------
+
 bool LinkedList::removeNode(string name)
 {
-	if (noe == 0 || first == nullptr)
+	if (nodeCount == 0 || first == nullptr)
 		return false;
 
 	Node* current = first;
 
 	while (current)
 	{
-		if (current->x && current->x->getName() == name)
+		if (current->data && current->data->getName() == name)
 		{
 			Node* prev = current->previous;
 			Node* next = current->next;
@@ -158,28 +156,33 @@ bool LinkedList::removeNode(string name)
 					next->previous = prev;
 			}
 
+			delete current->data;
+			current->data = nullptr;
 			delete current;
-			noe--;
+			current = nullptr;
+
+			nodeCount--;
 			return true;
 		}
-
 		current = current->next;
 	}
-
 	return false;
 }
-//--------------------------------------------------
+
 void LinkedList::clear()
 {
 	Node* current = first;
 	while (current)
 	{
 		Node* next = current->next;
+
+		delete current->data;
+		current->data = nullptr;
+
 		delete current;
 		current = next;
 	}
 	first = nullptr;
 	last = nullptr;
-	noe = 0;
+	nodeCount = 0;
 }
-

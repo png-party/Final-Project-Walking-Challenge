@@ -56,34 +56,43 @@
 #include "LinkedList.h"
 #include "Hood.h"
 #include "ChallengeManager.h"
+
 using namespace std;
+
 int main()
 {
+	ChallengeManager challengeManager = ChallengeManager();
 
-	//Test driver code
-	LinkedList bruh = LinkedList();
-	WalkData* x = new WalkData("irvine", 25);
-	bruh.addNode(x);
-	Person* defaultPerson = new Person("John Doe");
-	LinkedList people = LinkedList();
-	people.addNode(defaultPerson);
-	cout << bruh.getFirst()->x<< endl;
-	cout << defaultPerson << endl;
-	cout << people.getFirst()->x << endl;
-
-	LinkedList cities = LinkedList();
 	Hood* Irvine = new Hood("Irvine");
+	challengeManager.addCity(Irvine);
+
 	Hood* Orange = new Hood("Orange");
-	cities.addNode(Irvine);
-	cities.addNode(Orange);
-	ChallengeManager cm = ChallengeManager();
+	challengeManager.addCity(Orange);
+
+	Person* defaultPerson = new Person("John Doe");
+	challengeManager.addPerson(defaultPerson);
 
 	Person* someone = new Person("Someone");
-	someone->walk(cm.findItem("Irvine", cities), 100);
-	defaultPerson->walk(cm.findItem("Irvine", cities), 25);
+	challengeManager.addPerson(someone);
+
+	Hood* foundCity = challengeManager.findCity("Irvine");
+
+	if (foundCity != nullptr)
+	{
+		cout << "City found! Logging walks." << endl;
+		someone->walk(foundCity, 100);
+		defaultPerson->walk(foundCity, 25);
+	}
+	else
+	{
+		cout << "Error: City 'Irvine' not found in manager." << endl;
+	}
+
 	defaultPerson->printPersonList();
 	Irvine->printHoodList();
+
 	cout << someone->getTotalMiles() << endl;
 	cout << Irvine->getTotalMiles() << endl;
+
 	return 0;
 }

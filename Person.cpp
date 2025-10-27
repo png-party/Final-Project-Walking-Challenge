@@ -1,16 +1,17 @@
 #include "Person.h"
 #include "LinkedList.h"
 #include <iostream>
+
 using namespace std;
 
 Person::Person()
 {
-	cout << "Creating person object..." << endl;
+    cout << "Creating person object..." << endl;
 }
-//-----------------------------------------------------------
+
 Person::Person(string personName) : WalkData(personName)
 {
-	cout << "Creating person object..." << endl;
+    cout << "Creating person object..." << endl;
 }
 
 Person::Person(const Person& other)
@@ -20,21 +21,19 @@ Person::Person(const Person& other)
     personList = LinkedList(other.personList);
 }
 
-Person& Person::operator=(const Person& RHS)
+Person& Person::operator=(const Person& other)
 {
-    if (this != &RHS)
+    if (this != &other)
     {
-        name = RHS.name;
-        totalMiles = RHS.totalMiles;
-        personList = LinkedList(RHS.personList);
+        name = other.name;
+        totalMiles = other.totalMiles;
+        personList = LinkedList(other.personList);
     }
     else cout << "Attempting self-assignment!" << endl;
     return *this;
 }
 
-//-----------------------------------------------------------
 Person::~Person() {
-    personList.clear();
     cout << "Calling derived class destructor " << endl;
 }
 void Person::walk(WalkData* city, int miles)
@@ -42,53 +41,49 @@ void Person::walk(WalkData* city, int miles)
     totalMiles += miles;
     string cityName = city->getName();
 
-    // check if the city already exists in person's list
     Node* current = personList.getFirst();
     while (current)
     {
-        if (current->x->getName() == cityName)
+        if (current->data->getName() == cityName)
         {
-            current->x->setTotalMiles(current->x->getTotalMiles() + miles);
+            current->data->setTotalMiles(current->data->getTotalMiles() + miles);
             break;
         }
         current = current->next;
     }
 
-    // add new city if not found
     if (!current)
     {
         WalkData* newCity = new WalkData(cityName, miles);
         personList.addNode(newCity);
     }
 
-    // update Hood data using logWalk()
-    if (Hood* c = dynamic_cast<Hood*>(city))
+    if (Hood* cityAsHood = dynamic_cast<Hood*>(city))
     {
-        c->logWalk(name, miles);
+        cityAsHood->logWalk(name, miles);
     }
 }
-//-----------------------------------------------------------
+
 void Person::printPersonList() const
 {
-	cout << "\n===" << name << "'s Walking Data===" << endl;
-	Node* current = personList.getFirst();
-	int i = 1;
-	while (current)
-	{
-		cout << "\n\t" << i <<".) Location: " << current->x->getName() << ", Miles Logged: " << current->x->getTotalMiles() << endl;
-		current = current->next;
-		i++;
-	}
+    cout << "\n===" << name << "'s Walking Data===" << endl;
+    Node* current = personList.getFirst();
+    int count = 1;
+    while (current)
+    {
+        cout << "\n\t" << count << ".) Location: " << current->data->getName() << ", Miles Logged: " << current->data->getTotalMiles() << endl;
+        current = current->next;
+        count++;
+    }
 }
-//-----------------------------------------------------------
+
 void Person::writeToStream(ostream& out) const
 {
-	out << "Username: " << getName() << ", Total miles walked: " << getTotalMiles() << endl;
+    out << "Username: " << getName() << ", Total miles walked: " << getTotalMiles() << endl;
 }
-//-----------------------------------------------------------
-/*Prints person's name and total stats*/
-ostream& operator<<(ostream& out, const Person* human)
+
+ostream& operator<<(ostream& out, const Person* person)
 {
-	human->writeToStream(out);
-	return out;
+    person->writeToStream(out);
+    return out;
 }

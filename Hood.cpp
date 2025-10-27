@@ -1,12 +1,13 @@
 #include "Hood.h"
 #include <iostream>
+
 using namespace std;
 
 Hood::Hood()
 {
 	cout << "Creating a default neighborhood object" << endl;
 }
-//--------------------------------------------------------------
+
 Hood::Hood(const string& cityName) : WalkData(cityName)
 {
 	cout << "Creating neighborhood object" << endl;
@@ -19,13 +20,13 @@ Hood::Hood(const Hood& other)
 	hoodList = LinkedList(other.hoodList);
 }
 
-Hood& Hood::operator=(const Hood& RHS)
+Hood& Hood::operator=(const Hood& other)
 {
-	if (this != &RHS)
+	if (this != &other)
 	{
-		name = RHS.name;
-		totalMiles = RHS.totalMiles;
-		hoodList = LinkedList(RHS.hoodList);
+		name = other.name;
+		totalMiles = other.totalMiles;
+		hoodList = LinkedList(other.hoodList);
 	}
 	else cout << "Attempting self-assignment!" << endl;
 	return *this;
@@ -33,37 +34,33 @@ Hood& Hood::operator=(const Hood& RHS)
 
 Hood::~Hood()
 {
-	hoodList.clear();
 	cout << "Calling derived class destructor" << endl;
 }
-//--------------------------------------------------------------
+
 LinkedList& Hood::getList()
 {
 	return hoodList;
 }
-//--------------------------------------------------------------
-//logs walked miles
+
 void Hood::logWalk(const string& personName, int miles)
 {
 	Node* current = hoodList.getFirst();
 	while (current)
 	{
-		if (current->x->getName() == personName)
+		if (current->data->getName() == personName)
 		{
-			current->x->setTotalMiles(current->x->getTotalMiles() + miles);
+			current->data->setTotalMiles(current->data->getTotalMiles() + miles);
 			totalMiles += miles;
 			return;
 		}
 		current = current->next;
 	}
 
-	//add person
 	WalkData* newPerson = new WalkData(personName, miles);
 	hoodList.addNode(newPerson);
 	totalMiles += miles;
 }
-//--------------------------------------------------------------
-//finds person with the highest miles
+
 WalkData* Hood::getTopWalker() const
 {
 	Node* current = hoodList.getFirst();
@@ -75,36 +72,36 @@ WalkData* Hood::getTopWalker() const
 
 	while (current)
 	{
-		if (current->x->getTotalMiles() > topWalker->x->getTotalMiles())
+		if (current->data->getTotalMiles() > topWalker->data->getTotalMiles())
 		{
 			topWalker = current;
 		}
 		current = current->next;
 	}
 
-	return topWalker->x;
+	return topWalker->data;
 }
-//--------------------------------------------------------------
+
 void Hood::printHoodList() const
 {
 	cout << "\n===The City of " << name << "'s Walking Data===" << endl;
 	cout << "" << totalMiles << " Total Miles Logged:" << endl;
 	Node* current = hoodList.getFirst();
-	int i = 1;
+	int count = 1;
 	while (current)
 	{
-		cout << "\n\t" << i <<".) Person: " << current->x->getName()
-		<< ", Miles Logged: " <<  current->x->getTotalMiles()<< endl;
+		cout << "\n\t" << count << ".) Person: " << current->data->getName()
+			<< ", Miles Logged: " << current->data->getTotalMiles() << endl;
 		current = current->next;
-		i++;
+		count++;
 	}
 }
-//--------------------------------------------------------------
+
 void Hood::writeToStream(ostream& out) const
 {
 	out << "Location: " << getName() << " Total Miles Logged: " << getTotalMiles() << endl;
 }
-//--------------------------------------------------------------
+
 ostream& operator<<(ostream& out, const Hood& city)
 {
 	city.writeToStream(out);

@@ -6,6 +6,7 @@
 #include "LinkedList.h"
 #include "WalkData.h"
 #include "Hood.h"
+
 using namespace std;
 
 class Person : public WalkData
@@ -13,18 +14,16 @@ class Person : public WalkData
 	LinkedList personList;
 
 public:
-	/*Constructors*/
 	Person();
 	Person(string personName);
 	Person(const Person& other);
-	Person& operator=(const Person& RHS);
+	Person& operator=(const Person& other);
 	~Person() override;
 	void walk(WalkData* city, int miles);
 	void printPersonList() const;
 	void writeToStream(ostream& out) const override;
 
-	//Overloaded stream insertion operator
-	friend ostream& operator<<(ostream& out, const Person* human);
+	friend ostream& operator<<(ostream& out, const Person* person);
 };
 
 #endif

@@ -10,35 +10,26 @@ class LinkedList
 {
 
 public:
-	//Constructor
 	LinkedList();
 
-	/*Getters and setters*/
-	int getNoe() const;
+	int getNodeCount() const;
 	Node* getFirst() const;
 	Node* getLast() const;
 
-	/*==The Big 5==*/
-	//Copy constructor
 	LinkedList(const LinkedList& other);
-	//Overloaded Assignment operator
-	LinkedList& operator=(const LinkedList& RHS);
-	//Destructor
+	LinkedList& operator=(const LinkedList& other);
 	~LinkedList();
-	//Move constructor
-	LinkedList(LinkedList&& RHS);
-	//Move assignment operator
-	LinkedList& operator=(LinkedList&& RHS);
+	LinkedList(LinkedList&& other);
+	LinkedList& operator=(LinkedList&& other);
 
-	bool removeNode(string name);   
+	bool removeNode(string name);
 	void addNode(WalkData* data);
 	void clear();
-	//void addNode(const Node<WalkData>& data);
 
 private:
 	Node* first;
 	Node* last;
-	int noe;
+	int nodeCount;
 };
 
 
