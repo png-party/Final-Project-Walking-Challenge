@@ -1,5 +1,15 @@
+/*
+Nicole Sirbu, Nicolas Grant, Ramon Aguilera
+CMPR 131 - Fall 2025
+October 26th, 2025
+Final Project #1
+Collaboration:
+    https://stackoverflow.com/questions/50979946/virtual-insertion-operator-overloading-for-base-and-derived-class
+*/
+
 #include "Person.h"
 #include "LinkedList.h"
+#include "Hood.h"
 #include <iostream>
 
 using namespace std;
@@ -67,6 +77,7 @@ void Person::walk(WalkData* city, int miles)
 void Person::printPersonList() const
 {
     cout << "\n===" << name << "'s Walking Data===" << endl;
+    cout << "" << totalMiles << " Total Miles Logged:" << endl;
     Node* current = personList.getFirst();
     int count = 1;
     while (current)
