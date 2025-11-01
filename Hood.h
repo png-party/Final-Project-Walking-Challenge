@@ -23,8 +23,6 @@ class Hood : public WalkData
 public:
 	Hood();
 	Hood(const string& cityName);
-	Hood(const Hood& other);
-	Hood& operator=(const Hood& other);
 	~Hood() override;
 	void logWalk(const string& personName, int miles);
 

@@ -1,4 +1,4 @@
-/*
+/* 
 Nicole Sirbu, Nicolas Grant, Ramon Aguilera
 CMPR 131 - Fall 2025
 October 26th, 2025
@@ -35,16 +35,26 @@ Node* LinkedList::getLast() const
 
 LinkedList::LinkedList(const LinkedList& other)
 {
-	first = nullptr;
-	last = nullptr;
-	nodeCount = 0;
+	nodeCount = other.nodeCount;
 
-	Node* current = other.first;
-	while (current)
+	//Check if copying an empty list
+	if (!other.first)
 	{
-		WalkData* copyData = new WalkData(*current->getData());
-		addNode(copyData);
-		current = current->next;
+		first = nullptr;
+		last = nullptr;
+	}
+	else
+	{
+	//	first = new Node(other.first->getData());
+		Node* current = other.first;
+		while (current)
+		{
+			WalkData* copyData = new WalkData(*current->getData());
+			addNode(copyData);
+			current = current->next;
+		}
+	//	last = current;
+
 	}
 }
 
@@ -60,6 +70,7 @@ LinkedList& LinkedList::operator=(const LinkedList& other)
 			current = current->next;
 		}
 	}
+	else cout << "Attempting self-assignment!" << endl;
 	return *this;
 }
 
@@ -99,13 +110,13 @@ LinkedList& LinkedList::operator=(LinkedList&& other)
 
 void LinkedList::addNode(WalkData* data)
 {
+	//Check if adding the first node
 	if (nodeCount == 0)
 	{
 		Node* temp = new Node(data);
 		if (temp)
 		{
 			first = temp;
-			temp = nullptr;
 			last = first;
 			nodeCount++;
 		}
@@ -119,7 +130,6 @@ void LinkedList::addNode(WalkData* data)
 			temp->previous = last;
 			last->next = temp;
 			last = temp;
-			temp = nullptr;
 			nodeCount++;
 		}
 		else cout << "Memory could not be allocated" << endl;

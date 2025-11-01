@@ -16,61 +16,52 @@ using namespace std;
 
 Person::Person()
 {
-    cout << "Creating person object..." << endl;
+    personList = LinkedList();
+
 }
 
 Person::Person(string personName) : WalkData(personName)
 {
+    personList = LinkedList();
     cout << "Creating person object..." << endl;
 }
 
-Person::Person(const Person& other)
+Person::~Person()
 {
-    name = other.name;
-    totalMiles = other.totalMiles;
-    personList = LinkedList(other.personList);
+    cout << "Calling derived class destructor" << endl;
 }
 
-Person& Person::operator=(const Person& other)
-{
-    if (this != &other)
-    {
-        name = other.name;
-        totalMiles = other.totalMiles;
-        personList = LinkedList(other.personList);
-    }
-    else cout << "Attempting self-assignment!" << endl;
-    return *this;
-}
-
-Person::~Person() {
-    cout << "Calling derived class destructor " << endl;
-}
 void Person::walk(WalkData* city, int miles)
 {
+    //Update corresponding city's walking data data
+    if (Hood* cityAsHood = dynamic_cast<Hood*>(city))
+    {
+        cityAsHood->logWalk(name, miles);
+    }
+    else cout << "You must log data to a city!" << endl;
+
+    //Update the person's walking data
     totalMiles += miles;
     string cityName = city->getName();
-
     Node* current = personList.getFirst();
-    while (current)
-    {
-        if (current->data->getName() == cityName)
-        {
-            current->data->setTotalMiles(current->data->getTotalMiles() + miles);
-            break;
-        }
-        current = current->next;
-    }
 
+    //Check if the person's list is empty
     if (!current)
     {
         WalkData* newCity = new WalkData(cityName, miles);
         personList.addNode(newCity);
     }
-
-    if (Hood* cityAsHood = dynamic_cast<Hood*>(city))
+    else
     {
-        cityAsHood->logWalk(name, miles);
+        while (current)
+        {
+            if (current->data->getName() == cityName)
+            {
+                current->data->setTotalMiles(current->data->getTotalMiles() + miles);
+                break;
+            }
+            current = current->next;
+        }
     }
 }
 

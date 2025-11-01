@@ -21,7 +21,14 @@ public:
 	Node* previous;
 	WalkData* data; 
 	Node(WalkData* itemData); 
-	WalkData* getData() const; 
+	WalkData* getData() const;
+
+	Node(const Node& other);
+	Node& operator=(const Node& other);
+	~Node();
+	Node(Node&& other);
+	Node& operator=(Node&& other);
+
 };
 
 #endif NODE_H

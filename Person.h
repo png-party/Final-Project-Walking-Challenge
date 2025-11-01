@@ -23,8 +23,6 @@ class Person : public WalkData
 public:
 	Person();
 	Person(string personName);
-	Person(const Person& other);
-	Person& operator=(const Person& other);
 	~Person() override;
 	void walk(WalkData* city, int miles);
 	void printPersonList() const;

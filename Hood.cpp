@@ -13,31 +13,15 @@ using namespace std;
 
 Hood::Hood()
 {
+	hoodList = LinkedList();
+	name = "Unnamed neighborhood";
 	cout << "Creating a default neighborhood object" << endl;
 }
 
 Hood::Hood(const string& cityName) : WalkData(cityName)
 {
+	hoodList = LinkedList();
 	cout << "Creating neighborhood object" << endl;
-}
-
-Hood::Hood(const Hood& other)
-{
-	name = other.name;
-	totalMiles = other.totalMiles;
-	hoodList = LinkedList(other.hoodList);
-}
-
-Hood& Hood::operator=(const Hood& other)
-{
-	if (this != &other)
-	{
-		name = other.name;
-		totalMiles = other.totalMiles;
-		hoodList = LinkedList(other.hoodList);
-	}
-	else cout << "Attempting self-assignment!" << endl;
-	return *this;
 }
 
 Hood::~Hood()
@@ -53,20 +37,38 @@ LinkedList& Hood::getList()
 void Hood::logWalk(const string& personName, int miles)
 {
 	Node* current = hoodList.getFirst();
-	while (current)
+	//Check if we're adding the first node
+	if (!current)
 	{
-		if (current->data->getName() == personName)
+		while (current)
 		{
-			current->data->setTotalMiles(current->data->getTotalMiles() + miles);
-			totalMiles += miles;
-			return;
+			if (current->data->getName() == personName)
+			{
+				current->data->setTotalMiles(current->data->getTotalMiles() + miles);
+				totalMiles += miles;
+				return;
+			}
+			current = current->next;
 		}
-		current = current->next;
 	}
+	else
+	{
+		while (current)
+		{
+			if (current->data->getName() == personName)
+			{
+				current->data->setTotalMiles(current->data->getTotalMiles() + miles);
+				totalMiles += miles;
+				return;
+			}
+			current = current->next;
+		}
 
-	WalkData* newPerson = new WalkData(personName, miles);
-	hoodList.addNode(newPerson);
-	totalMiles += miles;
+
+		WalkData* newPerson = new WalkData(personName, miles);
+		hoodList.addNode(newPerson);
+		totalMiles += miles;
+	}
 }
 
 WalkData* Hood::getTopWalker() const

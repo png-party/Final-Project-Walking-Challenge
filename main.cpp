@@ -18,6 +18,11 @@ using namespace std;
 int main()
 {
 	ChallengeManager challengeManager = ChallengeManager();
+	LinkedList x = LinkedList();
+	WalkData* ew = new WalkData("bruh moment", 100);
+
+	x.addNode(ew);
+	LinkedList y = LinkedList(x);
 
 	Hood* Irvine = new Hood("Irvine");
 	challengeManager.addCity(Irvine);
