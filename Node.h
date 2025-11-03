@@ -16,12 +16,21 @@ using namespace std;
 
 class Node
 {
-public:
 	Node* next;
 	Node* previous;
-	WalkData* data; 
-	Node(WalkData* itemData); 
+	WalkData* data;
+	int miles;
+public:
+	Node(WalkData* itemData, int milage); 
 	WalkData* getData() const;
+	Node* getNext() const;
+	Node* getPrevious() const;
+	int getMiles() const;
+
+	void setData(WalkData* itemData);
+	void setNext(Node* link);
+	void setPrevious(Node* link);
+	void setMiles(int milage);
 
 	Node(const Node& other);
 	Node& operator=(const Node& other);

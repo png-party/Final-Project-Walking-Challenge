@@ -18,10 +18,8 @@ using namespace std;
 
 class Hood : public WalkData
 {
-	LinkedList hoodList = LinkedList();
-
+	LinkedList hoodList;
 public:
-	Hood();
 	Hood(const string& cityName);
 	~Hood() override;
 	void logWalk(const string& personName, int miles);

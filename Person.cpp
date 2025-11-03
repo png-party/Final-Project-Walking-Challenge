@@ -14,16 +14,17 @@ Collaboration:
 
 using namespace std;
 
-Person::Person()
-{
-    personList = LinkedList();
-
-}
-
 Person::Person(string personName) : WalkData(personName)
 {
     personList = LinkedList();
-    cout << "Creating person object..." << endl;
+    userId = lastID;
+    lastID++;
+}
+
+Person::Person(string personName, int identity) :WalkData(personName)
+{
+    personList = LinkedList();
+    userId = identity;
 }
 
 Person::~Person()
@@ -31,39 +32,48 @@ Person::~Person()
     cout << "Calling derived class destructor" << endl;
 }
 
-void Person::walk(WalkData* city, int miles)
+void Person::printMinMaxWalks() const
 {
-    //Update corresponding city's walking data data
-    if (Hood* cityAsHood = dynamic_cast<Hood*>(city))
-    {
-        cityAsHood->logWalk(name, miles);
-    }
-    else cout << "You must log data to a city!" << endl;
+    Node* maxCity = personList.getFirst();
+    Node* minCity = personList.getFirst();
 
-    //Update the person's walking data
-    totalMiles += miles;
-    string cityName = city->getName();
     Node* current = personList.getFirst();
-
-    //Check if the person's list is empty
     if (!current)
     {
-        WalkData* newCity = new WalkData(cityName, miles);
-        personList.addNode(newCity);
+        cout << "No walks recorded!" << endl;
+        return;
     }
-    else
+    while (current)
     {
-        while (current)
+        if (current->getMiles() > maxCity->getMiles())
         {
-            if (current->data->getName() == cityName)
-            {
-                current->data->setTotalMiles(current->data->getTotalMiles() + miles);
-                break;
-            }
-            current = current->next;
+            maxCity = current;
         }
+        else if (current->getMiles() < minCity->getMiles())
+        {
+            minCity = current;
+        }
+        current = current->getNext();
     }
+    cout << name << "has walked the most miles in " << maxCity->getData()->getName() << " with a total of " << maxCity->getMiles() << " miles recorded"<< endl;
+    cout << "In addition, " << name << " has walked the least miles in " << minCity->getData()->getName() << " with a total of " << minCity->getMiles() << " miles recorded" << endl;
 }
+
+int Person::getUserId() const
+{
+    return userId;
+}
+
+LinkedList& Person::getList()
+{
+    return personList;
+}
+
+void Person::setUserId(int identity)
+{
+    userId = identity;
+}
+
 
 void Person::printPersonList() const
 {
@@ -73,8 +83,8 @@ void Person::printPersonList() const
     int count = 1;
     while (current)
     {
-        cout << "\n\t" << count << ".) Location: " << current->data->getName() << ", Miles Logged: " << current->data->getTotalMiles() << endl;
-        current = current->next;
+        cout << "\n\t" << count << ".) Location: " << current->getData()->getName() << ", Miles Logged: " << current->getData()->getTotalMiles() << endl;
+        current = current->getNext();
         count++;
     }
 }

@@ -12,11 +12,12 @@ Collaboration:
 
 using namespace std;
 
-Node::Node(WalkData* itemData)
+Node::Node(WalkData* itemData, int milage)
 {
-	previous = nullptr;
-	next = nullptr;
 	data = itemData;
+	miles = milage;
+	next = nullptr;
+	previous = nullptr;
 }
 
 WalkData* Node::getData() const
@@ -24,31 +25,58 @@ WalkData* Node::getData() const
 	return data;
 }
 
+Node* Node::getNext() const
+{
+	return next;
+}
+
+Node* Node::getPrevious() const
+{
+	return previous;
+}
+
+int Node::getMiles() const
+{
+	return miles;
+}
+
+void Node::setData(WalkData* itemData)
+{
+	data = itemData;
+}
+
+void Node::setNext(Node* link)
+{
+	next = link;
+}
+
+void Node::setPrevious(Node* link)
+{
+	previous = link;
+}
+
+void Node::setMiles(int milage)
+{
+	miles = milage;
+}
+
 Node::Node(const Node& other)
 {
-	previous = nullptr;
+	data = other.data;
+	miles = other.miles;
 	next = nullptr;
-	WalkData* temp = new WalkData(other.data->getName(), other.data->getTotalMiles());
-	if (temp)
-	{
-		data = temp;
-	}
-	else cout << "Memory could not be allocated!" << endl;
+	previous = nullptr;
+	
 }
 
 Node& Node::operator=(const Node& other)
 {
 	if (this != &other)
 	{
-		previous = nullptr;
+		data = other.data;
+		miles = other.miles;
 		next = nullptr;
-		delete[] data;
-		WalkData* temp = new WalkData(other.data->getName(), other.data->getTotalMiles());
-		if (temp)
-		{
-			data = temp;
-		}
-		else cout << "Memory could not be allocated!" << endl;
+		previous = nullptr;
 	}
 	else cout << "Attempting self-assignment!" << endl;
 	return *this;
@@ -56,31 +84,35 @@ Node& Node::operator=(const Node& other)
 
 Node::~Node()
 {
-	delete[] data;
+	data = nullptr;
 }
 
 Node::Node(Node&& other)
 {
-	previous = other.previous;
-	next = other.next;
 	data = other.data;
+	miles = other.miles;
+	next = other.next;
+	previous = other.previous;
 
-	other.previous = nullptr;
-	other.next = nullptr;
 	other.data = nullptr;
+	other.miles = 0;
+	other.next = nullptr;
+	other.previous = nullptr;
 }
 
 Node& Node::operator=(Node&& other)
 {
 	if (this != &other)
 	{
-		previous = other.previous;
-		next = other.next;
 		data = other.data;
+		miles = other.miles;
+		next = other.next;
+		previous = other.previous;
 
-		other.previous = nullptr;
-		other.next = nullptr;
 		other.data = nullptr;
+		other.miles = 0;
+		other.next = nullptr;
+		other.previous = nullptr;
 	}
 	else cout << "Attempting to move to self!" << endl;
 	return *this;

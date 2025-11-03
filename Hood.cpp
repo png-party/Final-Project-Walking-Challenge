@@ -11,13 +11,6 @@ Collaboration:
 
 using namespace std;
 
-Hood::Hood()
-{
-	hoodList = LinkedList();
-	name = "Unnamed neighborhood";
-	cout << "Creating a default neighborhood object" << endl;
-}
-
 Hood::Hood(const string& cityName) : WalkData(cityName)
 {
 	hoodList = LinkedList();
@@ -42,26 +35,26 @@ void Hood::logWalk(const string& personName, int miles)
 	{
 		while (current)
 		{
-			if (current->data->getName() == personName)
+			if (current->getData()->getName() == personName)
 			{
-				current->data->setTotalMiles(current->data->getTotalMiles() + miles);
+				current->getData()->setTotalMiles(current->getData()->getTotalMiles() + miles);
 				totalMiles += miles;
 				return;
 			}
-			current = current->next;
+			current = current->getNext();
 		}
 	}
 	else
 	{
 		while (current)
 		{
-			if (current->data->getName() == personName)
+			if (current->getData()->getName() == personName)
 			{
-				current->data->setTotalMiles(current->data->getTotalMiles() + miles);
+				current->getData()->setTotalMiles(current->getData()->getTotalMiles() + miles);
 				totalMiles += miles;
 				return;
 			}
-			current = current->next;
+			current = current->getNext();
 		}
 
 
@@ -78,31 +71,32 @@ WalkData* Hood::getTopWalker() const
 		return nullptr;
 
 	Node* topWalker = current;
-	current = current->next;
+	current = current->getNext();
 
 	while (current)
 	{
-		if (current->data->getTotalMiles() > topWalker->data->getTotalMiles())
+		if (current->getData()->getTotalMiles() > topWalker->getData()->getTotalMiles())
 		{
 			topWalker = current;
 		}
-		current = current->next;
+		current = current->getNext();
 	}
 
-	return topWalker->data;
+	return topWalker->getData();
 }
+
 
 void Hood::printHoodList() const
 {
-	cout << "\n===The City of " << name << "'s Walking Data===" << endl;
+	cout << "\n===The City of " << name << "'s Walking getData()===" << endl;
 	cout << "" << totalMiles << " Total Miles Logged:" << endl;
 	Node* current = hoodList.getFirst();
 	int count = 1;
 	while (current)
 	{
-		cout << "\n\t" << count << ".) Person: " << current->data->getName()
-			<< ", Miles Logged: " << current->data->getTotalMiles() << endl;
-		current = current->next;
+		cout << "\n\t" << count << ".) Person: " << current->getData()->getName()
+			<< ", Miles Logged: " << current->getData()->getTotalMiles() << endl;
+		current = current->getNext();
 		count++;
 	}
 }

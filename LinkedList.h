@@ -14,11 +14,11 @@ Collaboration:
 #include "Node.h"
 
 using namespace std;
-
+class Node;
 class LinkedList
 {
-
 public:
+	friend class Node;
 	LinkedList();
 
 	int getNodeCount() const;
@@ -31,8 +31,9 @@ public:
 	LinkedList(LinkedList&& other);
 	LinkedList& operator=(LinkedList&& other);
 
-	bool removeNode(string name);
-	void addNode(WalkData* data);
+	Node* findNode(const string& name) const;
+	bool removeNode(Node* toRemove);
+	void addNode(WalkData* data, int miles);
 	void clear();
 
 private:

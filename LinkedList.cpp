@@ -108,97 +108,100 @@ LinkedList& LinkedList::operator=(LinkedList&& other)
 	return *this;
 }
 
-void LinkedList::addNode(WalkData* data)
+Node* LinkedList::findNode(const string& name) const
 {
-	//Check if adding the first node
-	if (nodeCount == 0)
+	Node* current = first;
+	while (current)
 	{
-		Node* temp = new Node(data);
-		if (temp)
-		{
-			first = temp;
-			last = first;
-			nodeCount++;
-		}
-		else cout << "Memory could not be allocated" << endl;
+		if (current->getData()->getName() == name) return current;
+		current = current->next;
+	}
+	return nullptr;
+}
+
+void LinkedList::addNode(WalkData* data, int miles)
+{
+	//Check if pointer is valid
+	if (!data)
+	{
+		cout << "Attempting to add null data!" << endl;
+		return;
+	}
+	Node* temp = new Node(data, miles);
+	if (!temp)
+	{
+		cout << "Memory could not be allocated" << endl;
+		return;
+	}
+	//Check if adding the first node
+	if (!first)
+	{
+		first = temp;
+		last = first;
 	}
 	else
 	{
-		Node* temp = new Node(data);
-		if (temp)
-		{
-			temp->previous = last;
-			last->next = temp;
-			last = temp;
-			nodeCount++;
-		}
-		else cout << "Memory could not be allocated" << endl;
+		temp->previous = last;
+		last->next = temp;
+		last = temp;
 	}
+	nodeCount++;
 }
 
-bool LinkedList::removeNode(string name)
+bool LinkedList::removeNode(Node* toRemove)
 {
-	if (nodeCount == 0 || first == nullptr)
-		return false;
+	if (!toRemove || !first || nodeCount == 0) return false;
 
 	Node* current = first;
 
-	while (current)
+	//check if removing the only node in the list
+	if (nodeCount == 1)
 	{
-		if (current->data && current->data->getName() == name)
-		{
-			Node* prev = current->previous;
-			Node* next = current->next;
-
-			if (current == first)
-			{
-				first = next;
-				if (first)
-					first->previous = nullptr;
-			}
-			else
-			{
-				if (prev)
-					prev->next = next;
-			}
-
-			if (current == last)
-			{
-				last = prev;
-				if (last)
-					last->next = nullptr;
-			}
-			else
-			{
-				if (next)
-					next->previous = prev;
-			}
-
-			delete current->data;
-			current->data = nullptr;
-			delete current;
-			current = nullptr;
-
-			nodeCount--;
-			return true;
-		}
-		current = current->next;
+		first = nullptr;
+		last = nullptr;
 	}
-	return false;
-}
+	//Check if removing the first node
+	else if (toRemove == first)
+	{
+		first = first->next;
+	}
+	//Check if removing the last node
+	else if (toRemove == last)
+	{
+		last = last->previous;
+	}
+	else
+	{
+		while (current)
+		{
+			if (current == toRemove)
+			{
+				//Get address of node after the one to remove
+				Node* otherNode = current->next;
 
+				//Attach to previous node
+				otherNode->previous = current->previous;
+
+				//Make previous node point to next node over
+				current->previous->next = otherNode;
+			}
+			current = current->next;
+		}
+	}
+	delete toRemove;
+	nodeCount--;
+	return true;
+}
+/*Delete the node itself, but don't delete the memory
+ * in the node's data pointer if it's stored in other lists*/
 void LinkedList::clear()
 {
 	Node* current = first;
 	while (current)
 	{
-		Node* next = current->next;
-
-		delete current->data;
-		current->data = nullptr;
-
-		delete current;
-		current = next;
+		Node* toDelete = current;
+		current = current->next;
+		delete toDelete;
 	}
 	first = nullptr;
 	last = nullptr;

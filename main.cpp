@@ -7,6 +7,7 @@ Collaboration:
 	https://stackoverflow.com/questions/50979946/virtual-insertion-operator-overloading-for-base-and-derived-class
 */
 #include <iostream>
+#include <fstream>
 #include "Person.h"
 #include "WalkData.h"
 #include "LinkedList.h"
@@ -17,24 +18,25 @@ using namespace std;
 
 int main()
 {
-	ChallengeManager challengeManager = ChallengeManager();
-	LinkedList x = LinkedList();
-	WalkData* ew = new WalkData("bruh moment", 100);
+	ifstream file("data.txt");
 
-	x.addNode(ew);
+	ChallengeManager challengeManager = ChallengeManager();
+
+	challengeManager.loadData(file);
+	LinkedList x = LinkedList();
+
 	LinkedList y = LinkedList(x);
 
-	Hood* Irvine = new Hood("Irvine");
-	challengeManager.addCity(Irvine);
 
-	Hood* Orange = new Hood("Orange");
-	challengeManager.addCity(Orange);
+	challengeManager.createCity("Irvine");
 
-	Person* defaultPerson = new Person("John Doe");
-	challengeManager.addPerson(defaultPerson);
 
-	Person* someone = new Person("Someone");
-	challengeManager.addPerson(someone);
+	challengeManager.createCity("Orange");
+	
+	challengeManager.createPerson("John Doe");
+
+
+	challengeManager.createPerson("Someone");
 
 	Hood* foundCity = challengeManager.findCity("Irvine");
 
@@ -47,7 +49,6 @@ int main()
 	else cout << "Error: City 'Irvine' not found in manager." << endl;
 
 	defaultPerson->printPersonList();
-	Irvine->printHoodList();
 
 	cout << someone->getTotalMiles() << endl;
 	cout << Irvine->getTotalMiles() << endl;

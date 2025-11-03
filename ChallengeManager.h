@@ -15,32 +15,30 @@ Collaboration:
 #include "Hood.h"
 #include "WalkData.h"
 #include <string>
+#include <fstrea,>
+#include <vector>
 
 using namespace std;
 
 class ChallengeManager
 {
-private:
-    LinkedList peopleList;
-    LinkedList cityList;
+    LinkedList allParticipants;
+    LinkedList  allCities;
 
 public:
-    
     ChallengeManager();
 
-    
     ~ChallengeManager();
+    void loadData(const ifstream& file);
+    void createPerson(const string& name);
+    void createCity(const string& name);
+    void removePerson(const string& name);
+    void removeCity(const string& name);
 
-    
-    void addPerson(Person* person);
-    void addCity(Hood* city);
-
-    
-    WalkData* findItem(const string& name, LinkedList& listToSearch) const;
-
-    
+    void lookUpPerson(const string& name) const;
     Person* findPerson(const string& name) const;
     Hood* findCity(const string& name) const;
+    void recordWalk(const string& cityName, const string& personName, int milesWalked) const;
 };
 
 #endif
