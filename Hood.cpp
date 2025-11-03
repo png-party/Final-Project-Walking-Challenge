@@ -5,6 +5,9 @@ October 26th, 2025
 Final Project #1
 Collaboration:
 	https://stackoverflow.com/questions/50979946/virtual-insertion-operator-overloading-for-base-and-derived-class
+    https://www.geeksforgeeks.org/cpp/how-to-read-from-a-file-in-cpp/
+    https://www.hlsl.co.uk/blog/2017/12/1/c-noexcept-and-move-constructors-effect-on-performance-in-stl-containers
+    https://cppscripts.com/cpp-delete-copy-constructor
 */
 #include "Hood.h"
 #include <iostream>
@@ -13,55 +16,16 @@ using namespace std;
 
 Hood::Hood(const string& cityName) : WalkData(cityName)
 {
-	hoodList = LinkedList();
-	cout << "Creating neighborhood object" << endl;
 }
 
 Hood::~Hood()
 {
-	cout << "Calling derived class destructor" << endl;
+	//cout << "Calling derived class destructor" << endl;
 }
 
 LinkedList& Hood::getList()
 {
 	return hoodList;
-}
-
-void Hood::logWalk(const string& personName, int miles)
-{
-	Node* current = hoodList.getFirst();
-	//Check if we're adding the first node
-	if (!current)
-	{
-		while (current)
-		{
-			if (current->getData()->getName() == personName)
-			{
-				current->getData()->setTotalMiles(current->getData()->getTotalMiles() + miles);
-				totalMiles += miles;
-				return;
-			}
-			current = current->getNext();
-		}
-	}
-	else
-	{
-		while (current)
-		{
-			if (current->getData()->getName() == personName)
-			{
-				current->getData()->setTotalMiles(current->getData()->getTotalMiles() + miles);
-				totalMiles += miles;
-				return;
-			}
-			current = current->getNext();
-		}
-
-
-		WalkData* newPerson = new WalkData(personName, miles);
-		hoodList.addNode(newPerson);
-		totalMiles += miles;
-	}
 }
 
 WalkData* Hood::getTopWalker() const

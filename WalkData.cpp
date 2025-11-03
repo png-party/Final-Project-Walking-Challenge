@@ -5,6 +5,9 @@ October 26th, 2025
 Final Project #1
 Collaboration:
 	https://stackoverflow.com/questions/50979946/virtual-insertion-operator-overloading-for-base-and-derived-class
+    https://www.geeksforgeeks.org/cpp/how-to-read-from-a-file-in-cpp/
+    https://www.hlsl.co.uk/blog/2017/12/1/c-noexcept-and-move-constructors-effect-on-performance-in-stl-containers
+    https://cppscripts.com/cpp-delete-copy-constructor
 */
 #include "WalkData.h"
 #include <iostream>
@@ -15,25 +18,23 @@ WalkData::WalkData()
 {
 	name = "No name";
 	totalMiles = 0;
-	cout << "Creating walking activity log..." << endl;
 }
 
-WalkData::WalkData(string itemName)
+WalkData::WalkData(const string& itemName)
 {
 	name = itemName;
 	totalMiles = 0;
-	cout << "Creating walking activity log..." << endl;
 }
 
-WalkData::WalkData(string itemName, int itemMiles)
+WalkData::WalkData(const string& itemName, double itemMiles)
 {
 	name = itemName;
 	totalMiles = itemMiles;
-	cout << "Creating walking activity log..." << endl;
 }
+
 WalkData::~WalkData()
 {
-	cout << "Calling base class destructor" << endl;
+	//cout << "Calling base class destructor" << endl;
 }
 
 string WalkData::getName() const
@@ -41,19 +42,21 @@ string WalkData::getName() const
 	return name;
 }
 
-int WalkData::getTotalMiles() const
+double WalkData::getTotalMiles() const
 {
 	return totalMiles;
 }
 
-void WalkData::setName(string newName)
+void WalkData::setName(const string& newName)
 {
 	name = newName;
 }
 
-void WalkData::setTotalMiles(int miles)
+void WalkData::setTotalMiles(double miles)
 {
-	totalMiles = miles;
+	//Prevent setting negative miles
+	if (miles > 0) totalMiles = miles;
+	else totalMiles = 0;
 }
 
 void WalkData::writeToStream(ostream& out) const

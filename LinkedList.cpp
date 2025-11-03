@@ -5,8 +5,12 @@ October 26th, 2025
 Final Project #1
 Collaboration:
 	https://stackoverflow.com/questions/50979946/virtual-insertion-operator-overloading-for-base-and-derived-class
+    https://www.geeksforgeeks.org/cpp/how-to-read-from-a-file-in-cpp/
+    https://www.hlsl.co.uk/blog/2017/12/1/c-noexcept-and-move-constructors-effect-on-performance-in-stl-containers
+    https://cppscripts.com/cpp-delete-copy-constructor
 */
 #include "LinkedList.h"
+#include "Node.h"
 #include <iostream>
 
 using namespace std;
@@ -33,81 +37,6 @@ Node* LinkedList::getLast() const
 	return last;
 }
 
-LinkedList::LinkedList(const LinkedList& other)
-{
-	nodeCount = other.nodeCount;
-
-	//Check if copying an empty list
-	if (!other.first)
-	{
-		first = nullptr;
-		last = nullptr;
-	}
-	else
-	{
-	//	first = new Node(other.first->getData());
-		Node* current = other.first;
-		while (current)
-		{
-			WalkData* copyData = new WalkData(*current->getData());
-			addNode(copyData);
-			current = current->next;
-		}
-	//	last = current;
-
-	}
-}
-
-LinkedList& LinkedList::operator=(const LinkedList& other)
-{
-	if (this != &other)
-	{
-		clear();
-		Node* current = other.first;
-		while (current != nullptr)
-		{
-			addNode(new WalkData(*current->getData()));
-			current = current->next;
-		}
-	}
-	else cout << "Attempting self-assignment!" << endl;
-	return *this;
-}
-
-LinkedList::~LinkedList()
-{
-	clear();
-}
-
-LinkedList::LinkedList(LinkedList&& other)
-{
-	first = other.first;
-	last = other.last;
-	nodeCount = other.nodeCount;
-
-	other.first = nullptr;
-	other.last = nullptr;
-	other.nodeCount = 0;
-}
-
-LinkedList& LinkedList::operator=(LinkedList&& other)
-{
-	if (this != &other)
-	{
-		clear();
-
-		first = other.first;
-		last = other.last;
-		nodeCount = other.nodeCount;
-
-		other.first = nullptr;
-		other.last = nullptr;
-		other.nodeCount = 0;
-	}
-	else cout << "Attempting self-assignment" << endl;
-	return *this;
-}
-
 Node* LinkedList::findNode(const string& name) const
 {
 	Node* current = first;
@@ -119,7 +48,7 @@ Node* LinkedList::findNode(const string& name) const
 	return nullptr;
 }
 
-void LinkedList::addNode(WalkData* data, int miles)
+void LinkedList::addNode(WalkData* data, double miles)
 {
 	//Check if pointer is valid
 	if (!data)
@@ -130,7 +59,7 @@ void LinkedList::addNode(WalkData* data, int miles)
 	Node* temp = new Node(data, miles);
 	if (!temp)
 	{
-		cout << "Memory could not be allocated" << endl;
+		cout << "Memory could not be allocated!" << endl;
 		return;
 	}
 	//Check if adding the first node
@@ -141,8 +70,10 @@ void LinkedList::addNode(WalkData* data, int miles)
 	}
 	else
 	{
+		//Link new node to last
 		temp->previous = last;
 		last->next = temp;
+		//Update last
 		last = temp;
 	}
 	nodeCount++;
@@ -192,8 +123,14 @@ bool LinkedList::removeNode(Node* toRemove)
 	nodeCount--;
 	return true;
 }
-/*Delete the node itself, but don't delete the memory
- * in the node's data pointer if it's stored in other lists*/
+
+/*Delete the node itself, but don't delete the memory in the
+ *node's data pointer because it's used in other object's lists
+ *Since the ChallengeManager class stores any and all pointers
+ * that will be in the node's data pointer, the memory will
+ * only be freed by the class's destructor or its methods
+ * removePerson or removeCity
+ */
 void LinkedList::clear()
 {
 	Node* current = first;
@@ -206,4 +143,44 @@ void LinkedList::clear()
 	first = nullptr;
 	last = nullptr;
 	nodeCount = 0;
+}
+
+LinkedList::~LinkedList()
+{
+	clear();
+}
+
+//Move constructor
+LinkedList::LinkedList(LinkedList&& other) noexcept
+{
+	//Steal the other object's pointers
+	nodeCount = other.nodeCount;
+	first = other.first;
+	last = other.last;
+
+	//Modify the other object
+	other.nodeCount = 0;
+	other.first = nullptr;
+	other.last = nullptr;
+}
+
+//Move assignment
+LinkedList& LinkedList::operator=(LinkedList&& other) noexcept
+{
+	if (this != &other)
+	{
+		//Delete existing nodes
+		clear();
+		//Steal the other object's pointers
+		nodeCount = other.nodeCount;
+		first = other.first;
+		last = other.last;
+
+		//Modify the other object
+		other.nodeCount = 0;
+		other.first = nullptr;
+		other.last = nullptr;
+	}
+	else cout << "Attempting to move to self!" << endl;
+	return *this;
 }

@@ -5,12 +5,15 @@ October 26th, 2025
 Final Project #1
 Collaboration:
     https://stackoverflow.com/questions/50979946/virtual-insertion-operator-overloading-for-base-and-derived-class
+    https://www.geeksforgeeks.org/cpp/how-to-read-from-a-file-in-cpp/
+    https://www.hlsl.co.uk/blog/2017/12/1/c-noexcept-and-move-constructors-effect-on-performance-in-stl-containers
+    https://cppscripts.com/cpp-delete-copy-constructor
 */
 #include "ChallengeManager.h"
 
 #include <fstream>
 #include <iostream>
-
+#include <string>
 using namespace std;
 
 ChallengeManager::ChallengeManager()
@@ -20,16 +23,32 @@ ChallengeManager::ChallengeManager()
 
 ChallengeManager::~ChallengeManager()
 {
+	//Delete all of the memory from people objects
+	Node* p = allParticipants.getFirst();
+	while (p)
+	{
+		delete p->getData();
+		p = p->getNext();
+	}
+
+	//Delete all of the memory from hood objects
+	Node* h = allCities.getFirst();
+	while (h)
+	{
+		delete h->getData();
+		h = h->getNext();
+	}
 	cout << "Challenge Manager destroyed." << endl;
 }
 
-void ChallengeManager::loadData(const ifstream& file)
+void ChallengeManager::loadData(ifstream& file)
 {
 	if (!file.is_open())
 	{
 		cout << "Error: could not open file" << endl;
 		return;
 	}
+	//These objects are created based on data.txt
 	Hood* OldTowne = new Hood("Old Towne");
 	Hood* ElModena = new Hood("El Modena");
 	Hood* OrangeHills = new Hood("Orange Hills");
@@ -44,184 +63,230 @@ void ChallengeManager::loadData(const ifstream& file)
 	allCities.addNode(VillaPark, 0);
 	allCities.addNode(NorthElCamino, 0);
 	string s;
-	while (getLine(file, s))
+	while (getline(file, s))
 	{
-		String name = "";
-		int id;
-		int totalMiles;
+		string name = "";
 		int field = 1;
-		for (int i = 0; i < s.length(); i++)
+		Person* p = new Person("temp");
+		allParticipants.addNode(p, 0);
+		for (unsigned int i = 0; i < s.length(); i++) //Comparing .length() gives a warning if i isn't an unsigned int
 		{
-			if (field == 1 && isspace(s[i]))
+			if (isspace(s[i]))
 			{
-				id = stoi(s.substr(0, i));
-				s = s.substr(i - 1, str.length());
-				field++;
-			}
-			else if (field == 2 || field == 3 && isspace(s[i]))
-			{
-				name += s.substr(0, i);
-				s = s.substr(i - 1, str.length());
-				field++;
-			}
-			else if (field == 3 && isspace(s[i]))
-			{
-				//
+				//Record ID
+				if (field == 1)
+				{
+					int id = stoi(s.substr(0, i));
+					s = s.substr(i + 1, s.length() - i);
+					p->setUserId(id);
+					i = 0;
+					field++;
+				}
+				//Record name
+				else if (field == 2 || field == 3)
+				{
+					name += s.substr(0, i);
+					s = s.substr(i, s.length() - i + 1);
+					if (field == 3) p->setName(name);
+					i = 0;
+					field++;
+				}
+				//Record Old Towne data
+				else if (field == 4)
+				{
+					double ot = stod(s.substr(1, i));
+					s = s.substr(i, s.length() - i + 1);
+					if (ot > 0) recordWalk(OldTowne, p, ot);
+					i = 0;
+					field++;
+				}
+				//Record El Modena data
+				else if (field == 5)
+				{
+					double em = stod(s.substr(1, i));
+					s = s.substr(i, s.length() - i + 1);
+					if (em > 0) recordWalk(ElModena, p, em);
+					i = 0;
+					field++;
+				}
+				//Record Orange Hills data
+				else if (field == 6)
+				{
+					double oh = stod(s.substr(0, i));
+					s = s.substr(i + 1, s.length() - i + 1);
+					if (oh > 0) recordWalk(OrangeHills, p, oh);
+					i = 0;
+					field++;
+				}
+				//Record Santiago Creek data
+				else if (field == 7)
+				{
+					double sc = stod(s.substr(0, i));
+					s = s.substr(i + 1, s.length() - i + 1);
+					if (sc > 0) recordWalk(SantiagoCreek, p, sc);
+					i = 0;
+					field++;
+				}
+				//Record Villa Park & North El Camino Real data
+				else if (field == 8)
+				{
+					double vp = stod(s.substr(0, i));
+					s = s.substr(i, s.length() - i);
+					if (vp > 0) recordWalk(VillaPark, p, vp);
+					double ec = stod(s.substr(1, s.length() - 1));
+					if (ec > 0) recordWalk(NorthElCamino, p, ec);
+				}
 			}
 		}
 	}
 }
 
+void ChallengeManager::createPerson(const string& name)
+{
+	Person* newUser = new Person(name);
+	allParticipants.addNode(newUser, 0);
+}
 
+void ChallengeManager::createCity(const string& name)
+{
+	Hood* place = new Hood(name);
+	allCities.addNode(place, 0);
+}
 
-
-
-	void ChallengeManager::createPerson(const string & name)
+void ChallengeManager::removePerson(const string& name)
+{
+	Node* allParticipantsLocation = allParticipants.findNode(name);
+	if (auto p = dynamic_cast<Person*>(allParticipantsLocation->getData()))
 	{
-		auto newUser = new Person(name);
-		allParticipants.push_back(newUser);
-	}
+		cout << "Person \"" << name <<
+			"\" was found\nRemoving the person's walking activity from their neighborhoods..." << endl;
 
-	void ChallengeManager::createCity(const string & name)
-	{
-		auto newCity = new Hood(name);
-		allCities.push_back(newCity);
-	}
-
-	void ChallengeManager::removePerson(const string & name)
-	{
-		for (int i = 0; i < allParticipants.size(); i++)
+		//Traverse the person's walking data list to find the neighborhoods they walked in
+		Node* currentLog = p->getList().getFirst();
+		while (currentLog)
 		{
-			if (allParticipants[i]->getName() == name)
+			//Get the pointer to the corresponding neighborhood
+			if (auto currentCity = dynamic_cast<Hood*>(currentLog->getData()))
 			{
-				Person* p = allParticipants[i];
-				cout << "Person \"" << name <<
-					"\" was found\nRemoving the person's walking activity from their neighborhoods..." << endl;
+				//Remove the person's contributed miles from the city
+				currentCity->setTotalMiles(currentCity->getTotalMiles() - currentLog->getMiles());
 
-				//Traverse the person's walking data list to find the neighborhoods they walked in
-				Node* currentLog = p->getList().getFirst();
-				while (currentLog)
-				{
-					//Get the pointer to the corresponding neighborhood
-					if (auto currentCity = dynamic_cast<Hood*>(currentLog->getData()))
-					{
-						//Remove the person's contributed miles from the city
-						if (currentCity->getTotalMiles() - currentLog->getMiles() > 0)
-						{
-							currentCity->setTotalMiles(currentCity->getTotalMiles() - currentLog->getMiles());
-						}
-						else currentCity->setTotalMiles(0);
-
-						//Remove the person's entry from the city's walking log
-						Node* entryToRemove = currentCity->getList().findNode(p->getName());
-						currentCity->getList().removeNode(entryToRemove);
-					}
-				}
-				delete p;
-				allParticipants.erase(allParticipants.begin() + i);
-				return;
+				//Remove the person's entry from the city's walking log
+				Node* entryToRemove = currentCity->getList().findNode(p->getName());
+				currentCity->getList().removeNode(entryToRemove);
 			}
+			currentLog = currentLog->getNext();
 		}
+		allParticipants.removeNode(allParticipantsLocation);
+		delete p;
 	}
+}
 
-	void ChallengeManager::removeCity(const string & name)
+void ChallengeManager::removeCity(const string& name)
+{
+	Node* allCitiesLocation = allCities.findNode(name);
+	if (auto h = dynamic_cast<Hood*>(allCitiesLocation->getData()))
 	{
-		for (int i = 0; i < allCities.size(); i++)
+		cout << "Neighborhood \"" << name <<
+			"\" was found\nRemoving the city from participants' walking activity..." << endl;
+
+		//Traverse the city's walking data list to find people who walked there
+		Node* currentLog = h->getList().getFirst();
+		while (currentLog)
 		{
-			if (allCities[i]->getName() == name)
+			//Get the pointer to the corresponding person
+			if (auto currentPerson = dynamic_cast<Person*>(currentLog->getData()))
 			{
-				Hood* h = allCities[i];
-				cout << "Neighborhood \"" << name <<
-					"\" was found\nRemoving the city from participants' walking activity..." << endl;
+				//Remove the miles that person walked in that city
+				currentPerson->setTotalMiles(currentPerson->getTotalMiles() - currentLog->getMiles());
 
-				//Traverse the city's walking data list to find people who walked there
-				Node* currentLog = h->getList().getFirst();
-				while (currentLog)
-				{
-					//Get the pointer to the corresponding person
-					if (auto currentPerson = dynamic_cast<Person*>(currentLog->getData()))
-					{
-						//Remove the miles that person walked in that city
-						if (currentPerson->getTotalMiles() - currentLog->getMiles() > 0)
-						{
-							currentPerson->setTotalMiles(currentPerson->getTotalMiles() - currentLog->getMiles());
-						}
-						else currentPerson->setTotalMiles(0);
-
-						//Remove the person's entry from the city's walking log
-						Node* entryToRemove = currentPerson->getList().findNode(h->getName());
-						currentPerson->getList().removeNode(entryToRemove);
-					}
-				}
-				delete h;
-				allCities.erase(allCities.begin() + i);
-				return;
+				//Remove the person's entry from the city's walking log
+				Node* entryToRemove = currentPerson->getList().findNode(h->getName());
+				currentPerson->getList().removeNode(entryToRemove);
 			}
+			currentLog = currentLog->getNext();
 		}
+		allCities.removeNode(allCitiesLocation);
+		delete h;
 	}
+}
 
-	void ChallengeManager::lookUpPerson(const string & name) const
+void ChallengeManager::getPersonStats(const string& name) const
+{
+	Person* p = findPerson(name);
+	cout << "\n====" << p->getName() << "'s statistics====\nTotal miles walked: " << p->getTotalMiles() <<
+		"\nTotal neighborhoods visited: " << p->getList().getNodeCount() << endl;
+	p->printMinMaxWalks();
+	cout << "=====================\n" << endl;
+}
+
+Person* ChallengeManager::findPerson(const string& name) const
+{
+	Person* p = dynamic_cast<Person*>(allParticipants.findNode(name)->getData());
+	if (!p) cout << "Error: participant \"" << name << "\" was not found in manager!" << endl;
+	return p;
+}
+
+/*Returns the person in the challenge with the most amount of miles walked
+ * There is also a method in the Hood class to get the top walker in
+ * a specific city, too
+ */
+Person* ChallengeManager::getMostActive() const
+{
+	Person* p = dynamic_cast<Person*>(allParticipants.getFirst()->getData());
+	if (!p)
 	{
-		Person* p = findPerson(name);
-		cout << "\n====" << p->getName() << "'s statistics====\nTotal miles walked: " << p->getTotalMiles() <<
-			"\nTotal neighborhoods visited: " << p->getList().getNodeCount() << endl;
-		p->printMinMaxWalks();
-	}
-
-
-	void ChallengeManager::recordWalk(Hood * h, Person * p, int milesWalked) const
-	{
-		Hood* h = findCity(h->getName());
-		Person* p = findPerson(personName);
-
-		//Verify that the user is trying to record data for valid locations/people
-		if (!h || !p)
-		{
-			cout << "Make sure to create the neighborhoods/people first!" << endl;
-			return;
-		}
-
-		if (milesWalked <= 1)
-		{
-			cout << "You must record a walk one mile or greater" << endl;
-		}
-
-		//Update person's neighborhoods walking log
-		Node* currentCity = p->getList().findNode(cityName);
-
-		//Find the city in their walking activity, or create a new log if they've never walked there
-		if (currentCity) currentCity->setMiles(currentCity->getMiles() + milesWalked);
-		else p->getList().addNode(h, milesWalked);
-
-		//Add the person's activity to the corresponding city's walking log
-		Node* currentPerson = h->getList().findNode(personName);
-
-		//Find the participant in the city's walking activity, or create a new log if they've never walked there
-		if (currentPerson) currentPerson->setMiles(currentPerson->getMiles() + milesWalked);
-		else h->getList().addNode(p, milesWalked);
-
-		//Update both the city's and person's mile totals
-		p->setTotalMiles(p->getTotalMiles() + milesWalked);
-		h->setTotalMiles(h->getTotalMiles() + milesWalked);
-		cout << "Recorded " << personName << "'s walk in " << cityName << endl;
-	}
-
-	Person* ChallengeManager::findPerson(const string & name) const
-	{
-		Person* p = allParticipants.findNode(name)->getData();
-		if (!p) cout << "Error: participant \"" << name << "\" was not found in manager!" << endl;
-
+		cout << "No one has participated in the challenge yet!" << endl;
 		return p;
 	}
-
-
-	Hood* ChallengeManager::findCity(const string & name) const
+	Node* current = allParticipants.getFirst();
+	while (current)
 	{
-		for (Hood* h : allCities)
+		if (current->getData()->getTotalMiles() > p->getTotalMiles())
 		{
-			if (h->getName() == name) return h;
+			p = dynamic_cast<Person*>(current->getData());
 		}
-		cout << "Error: neighborhood \"" << name << "\" was not found in manager!" << endl;
-		return nullptr;
+		current = current->getNext();
+	}
+	cout << "Participant " << p->getName() << " has walked the most miles with a total of " << p->getTotalMiles() <<
+		" miles walked!" << endl;
+	return p;
+}
+
+
+Hood* ChallengeManager::findCity(const string& name) const
+{
+	Hood* h = dynamic_cast<Hood*>(allCities.findNode(name)->getData());
+	if (!h) cout << "Error: neighborhood \"" << name << "\" was not found in manager!" << endl;
+	return h;
+}
+
+void ChallengeManager::recordWalk(Hood* h, Person* p, double milesWalked) const
+{
+	if (milesWalked < 0)
+	{
+		cout << "==>You must record a walk longer than zero miles" << endl;
+		return;
 	}
 
+	//Update person's neighborhoods walking log
+	Node* currentCity = p->getList().findNode(h->getName());
+
+	//Find the city in their walking history, or create a new log if they've never walked there
+	if (currentCity) currentCity->setMiles(currentCity->getMiles() + milesWalked);
+	else p->getList().addNode(h, milesWalked);
+
+	//Add the person's activity to the corresponding city's walking history
+	Node* currentPerson = h->getList().findNode(p->getName());
+
+	//Find the participant in the city's walking activity, or create a new log if they've never walked there
+	if (currentPerson) currentPerson->setMiles(currentPerson->getMiles() + milesWalked);
+	else h->getList().addNode(p, milesWalked);
+
+	//Update both the city's and person's mile totals
+	p->setTotalMiles(p->getTotalMiles() + milesWalked);
+	h->setTotalMiles(h->getTotalMiles() + milesWalked);
+	if (milesWalked == 1) cout << "Recorded " << p->getName() << "'s walk of " << milesWalked << " mile in " + h->
+		getName() << endl;
+	else cout << "Recorded " << p->getName() << "'s walk of " << milesWalked << " miles in " + h->getName() << endl;
+}

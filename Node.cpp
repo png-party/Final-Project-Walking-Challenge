@@ -12,7 +12,7 @@ Collaboration:
 
 using namespace std;
 
-Node::Node(WalkData* itemData, int milage)
+Node::Node(WalkData* itemData, double milage)
 {
 	data = itemData;
 	miles = milage;
@@ -35,7 +35,7 @@ Node* Node::getPrevious() const
 	return previous;
 }
 
-int Node::getMiles() const
+double Node::getMiles() const
 {
 	return miles;
 }
@@ -55,7 +55,7 @@ void Node::setPrevious(Node* link)
 	previous = link;
 }
 
-void Node::setMiles(int milage)
+void Node::setMiles(double milage)
 {
 	miles = milage;
 }

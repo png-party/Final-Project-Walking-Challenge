@@ -5,6 +5,9 @@ October 26th, 2025
 Final Project #1 
 Collaboration:
     https://stackoverflow.com/questions/50979946/virtual-insertion-operator-overloading-for-base-and-derived-class
+    https://www.geeksforgeeks.org/cpp/how-to-read-from-a-file-in-cpp/
+    https://www.hlsl.co.uk/blog/2017/12/1/c-noexcept-and-move-constructors-effect-on-performance-in-stl-containers
+    https://cppscripts.com/cpp-delete-copy-constructor
 */
 #pragma once
 #ifndef CHALLENGEMANAGER_H
@@ -13,32 +16,41 @@ Collaboration:
 #include "LinkedList.h"
 #include "Person.h"
 #include "Hood.h"
-#include "WalkData.h"
 #include <string>
-#include <fstrea,>
-#include <vector>
-
+#include <fstream>
 using namespace std;
 
 class ChallengeManager
 {
-    LinkedList allParticipants;
-    LinkedList  allCities;
+	LinkedList allParticipants;
+	LinkedList allCities;
 
 public:
-    ChallengeManager();
+	ChallengeManager();
+	~ChallengeManager();
 
-    ~ChallengeManager();
-    void loadData(const ifstream& file);
-    void createPerson(const string& name);
-    void createCity(const string& name);
-    void removePerson(const string& name);
-    void removeCity(const string& name);
+	/*Although we could technically make new copies of all of the data within
+	 * a challenge manager, the copy constructor and move assignment are still
+	 * deleted because it's not very efficient or compatible with the current
+	 * current design, and moving over the data would be better anyways. */
+	ChallengeManager(const ChallengeManager& other) = delete;
+	ChallengeManager& operator=(const ChallengeManager& other) = delete;
 
-    void lookUpPerson(const string& name) const;
-    Person* findPerson(const string& name) const;
-    Hood* findCity(const string& name) const;
-    void recordWalk(const string& cityName, const string& personName, int milesWalked) const;
+	/*Move instead of copying*/
+	ChallengeManager(ChallengeManager&& other) noexcept = default;
+	ChallengeManager& operator=(ChallengeManager&& other) noexcept = default;
+
+	void loadData(ifstream& file);
+	void createPerson(const string& name);
+	void createCity(const string& name);
+	void removePerson(const string& name);
+	void removeCity(const string& name);
+
+	void getPersonStats(const string& name) const;
+	Person* findPerson(const string& name) const;
+	Person* getMostActive() const;
+	Hood* findCity(const string& name) const;
+	void recordWalk(Hood* h, Person* p, double milesWalked) const;
 };
 
 #endif
