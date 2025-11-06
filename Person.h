@@ -14,36 +14,41 @@ Collaboration:
 #define PERSON_H
 
 #include <string>
-#include "LinkedList.h"
-#include "Hood.h"
-#include "WalkData.h"
+#include <vector>
 
 using namespace std;
+class ChallengeManager;
 
-class Person : public WalkData
+class Person
 {
+	friend class ChallengeManager;
 	static int lastId;
-	LinkedList personList;
+	
+	string name;
+	double totalMiles;
 	int userId;
+	vector<double> personList;
+
+protected:
+	static vector<string> allCities;
 
 public:
 	Person(const string& personName);
 	Person(const string& personName, int identity);
-	~Person() override;
-	void printMinMaxWalks() const;
+	string getName() const;
+	double getTotalMiles() const;
 	int getUserId() const;
-	LinkedList& getList();
-	void setUserId(int identity);
-	void printPersonList() const;
-	void writeToStream(ostream& out) const override;
+	vector<double>& getList();
 
-	friend ostream& operator<<(ostream& out, const Person* person);
-	/*Prevent copying*/
-	Person(const Person& other) = delete;
-	Person& operator=(const Person& other) = delete;
-	/*Move instead*/
-	Person(Person&& other) noexcept = default;
-	Person& operator=(Person&& other) noexcept = default;
+	void setName(const string& newName);
+	void setTotalMiles(double miles);
+	void setUserId(int identity);
+
+	void printPersonList() const;
+	void printMinMaxWalks() const;
+	void printStats() const;
+	void recordWalk(unsigned int cityIndex, double milesWalked);
+	friend ostream& operator<<(ostream& out, const Person& person);
 };
 
 #endif

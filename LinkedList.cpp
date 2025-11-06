@@ -37,6 +37,18 @@ Node* LinkedList::getLast() const
 	return last;
 }
 
+LinkedList::LinkedList(const LinkedList& other)
+{
+}
+
+LinkedList& LinkedList::operator=(const LinkedList& other)
+{
+	if (this != &other)
+	{
+		
+	}
+}
+
 Node* LinkedList::findNode(const string& name) const
 {
 	Node* current = first;
@@ -48,7 +60,7 @@ Node* LinkedList::findNode(const string& name) const
 	return nullptr;
 }
 
-void LinkedList::addNode(WalkData* data, double miles)
+void LinkedList::addNode(Node* data)
 {
 	//Check if pointer is valid
 	if (!data)
@@ -56,25 +68,19 @@ void LinkedList::addNode(WalkData* data, double miles)
 		cout << "Attempting to add null data!" << endl;
 		return;
 	}
-	Node* temp = new Node(data, miles);
-	if (!temp)
-	{
-		cout << "Memory could not be allocated!" << endl;
-		return;
-	}
 	//Check if adding the first node
 	if (!first)
 	{
-		first = temp;
+		first = data;
 		last = first;
 	}
 	else
 	{
 		//Link new node to last
-		temp->previous = last;
-		last->next = temp;
+		data->previous = last;
+		last->next = data;
 		//Update last
-		last = temp;
+		last = data;
 	}
 	nodeCount++;
 }
@@ -124,13 +130,6 @@ bool LinkedList::removeNode(Node* toRemove)
 	return true;
 }
 
-/*Delete the node itself, but don't delete the memory in the
- *node's data pointer because it's used in other object's lists
- *Since the ChallengeManager class stores any and all pointers
- * that will be in the node's data pointer, the memory will
- * only be freed by the class's destructor or its methods
- * removePerson or removeCity
- */
 void LinkedList::clear()
 {
 	Node* current = first;

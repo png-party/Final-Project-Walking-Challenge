@@ -11,55 +11,36 @@ Collaboration:
 */
 
 #include "Person.h"
-#include "LinkedList.h"
+#include <vector>
 #include <iostream>
 
 using namespace std;
 int Person::lastId = 150;
+vector<string> allCities = { "Old Towne", "El Modena", "Orange Hills", "Santiago Creek", "Villa Park Area", "North El Camino Real" };
 
-Person::Person(const string& personName) : WalkData(personName)
+Person::Person(const string& personName)
 {
+	name = personName;
+	totalMiles = 0;
 	userId = lastId;
 	lastId++;
 }
 
-Person::Person(const string& personName, int identity) : WalkData(personName)
+Person::Person(const string& personName, int identity)
 {
+	name = personName;
+	totalMiles = 0;
 	userId = identity;
 }
 
-Person::~Person()
+string Person::getName() const
 {
-	//cout << "Calling derived class destructor" << endl;
+	return name;
 }
 
-void Person::printMinMaxWalks() const
+double Person::getTotalMiles() const
 {
-	Node* maxCity = personList.getFirst();
-	Node* minCity = personList.getFirst();
-
-	Node* current = personList.getFirst();
-	if (!current)
-	{
-		cout << "No walks recorded!" << endl;
-		return;
-	}
-	while (current)
-	{
-		if (current->getMiles() > maxCity->getMiles())
-		{
-			maxCity = current;
-		}
-		else if (current->getMiles() < minCity->getMiles())
-		{
-			minCity = current;
-		}
-		current = current->getNext();
-	}
-	cout << name << "has walked the most miles in " << maxCity->getData()->getName() << " with a total of " << maxCity->
-		getMiles() << " miles recorded" << endl;
-	cout << "In addition, " << name << " has walked the least miles in " << minCity->getData()->getName() <<
-		" with a total of " << minCity->getMiles() << " miles recorded" << endl;
+	return totalMiles;
 }
 
 int Person::getUserId() const
@@ -67,9 +48,22 @@ int Person::getUserId() const
 	return userId;
 }
 
-LinkedList& Person::getList()
+vector<double>& Person::getList() 
 {
 	return personList;
+}
+
+
+void Person::setName(const string& newName)
+{
+	name = newName;
+}
+
+void Person::setTotalMiles(double miles)
+{
+	//Prevent setting negative miles
+	if (miles > 0) totalMiles = miles;
+	else totalMiles = 0;
 }
 
 void Person::setUserId(int identity)
@@ -78,28 +72,63 @@ void Person::setUserId(int identity)
 }
 
 
+
 void Person::printPersonList() const
 {
+	if (personList.empty())
+	{
+		cout << name << " has not logged any walks! " << endl;
+		return;
+	}
 	cout << "\n===" << name << "'s Walking Data===" << endl;
 	cout << "" << totalMiles << " Total Miles Logged:" << endl;
-	Node* current = personList.getFirst();
-	int count = 1;
-	while (current)
+	for (unsigned int i  = 0; i < personList.size(); i++)
 	{
-		cout << "\n\t" << count << ".) Location: " << current->getData()->getName() << ", Miles Logged: " << current->
-			getData()->getTotalMiles() << endl;
-		current = current->getNext();
-		count++;
+		cout << "\n\t" << i+1 << ".) Location: " << allCities[i] << ", Miles Logged: " << personList[i] << endl;
 	}
 }
 
-void Person::writeToStream(ostream& out) const
+void Person::printMinMaxWalks() const
 {
-	out << "Username: " << getName() << ", Total miles walked: " << getTotalMiles() << endl;
+	unsigned int largestIndex = 0;
+	unsigned int smallestIndex = 0;
+	for (unsigned int i = 0; i < personList.size(); i++)
+	{
+		if (personList[i] > personList[largestIndex])  largestIndex = i;
+		else if (personList[i] < personList[smallestIndex]) smallestIndex = i;
+	}
+	
+	cout << name << "has walked the most miles in " << allCities[largestIndex] << " with a total of " << personList[largestIndex] << " miles recorded" << endl;
+	cout << "In addition, " << name << " has walked the least miles in " << allCities[smallestIndex] <<
+		" with a total of " << personList[smallestIndex] << " miles recorded" << endl;
 }
 
-ostream& operator<<(ostream& out, const Person* person)
+void Person::printStats() const
 {
-	person->writeToStream(out);
+	cout << "\n====" << name << "'s statistics====\nUserID:" << userId << "\nTotal miles walked: " << totalMiles <<
+		"\nTotal neighborhoods visited: " << personList.size() << endl;
+	printMinMaxWalks();
+	cout << "=====================\n" << endl;
+}
+
+void Person::recordWalk(unsigned int cityIndex, double milesWalked)
+{
+	if (milesWalked < 0)
+	{
+		cout << "==>You must record a walk longer than zero miles" << endl;
+		return;
+	}
+	//Check if they've walked there before, or resize the list
+	if (personList.size() - 1 < cityIndex) personList.resize(cityIndex);
+	personList[cityIndex] = milesWalked;
+	totalMiles += milesWalked;
+	
+	if (milesWalked == 1) cout << "Recorded " << name << "'s walk of " << milesWalked << " mile in " + allCities[cityIndex] << endl;
+	else cout << "Recorded " << name << "'s walk of " << milesWalked << " miles in " + allCities[cityIndex] << endl;
+}
+
+ostream& operator<<(ostream& out, const Person& p)
+{
+	out << "Username: " << p.getName() << ", Total miles walked: " << p.getTotalMiles() << endl;
 	return out;
 }

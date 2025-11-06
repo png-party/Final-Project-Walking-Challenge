@@ -12,7 +12,7 @@ Collaboration:
 #pragma once
 #ifndef NODE_H
 #define NODE_H
-#include "WalkData.h"
+#include "Person.h"
 #include <iostream>
 
 using namespace std;
@@ -22,21 +22,19 @@ class Node
 	friend class LinkedList;
 	Node* next;
 	Node* previous;
-	WalkData* data;
-	double miles;
+	Person data;
 
 public:
-	Node(WalkData* itemData, double milage)
+	Node(Person p)
 	{
-		data = itemData;
-		miles = milage;
+		data = p;
 		next = nullptr;
 		previous = nullptr;
 	}
 
-	WalkData* getData() const
+	Person* getData()
 	{
-		return data;
+		return &data;
 	}
 
 	Node* getNext() const
@@ -49,14 +47,9 @@ public:
 		return previous;
 	}
 
-	double getMiles() const
+	void setData(const Person& p)
 	{
-		return miles;
-	}
-
-	void setData(WalkData* itemData)
-	{
-		data = itemData;
+		data = p;
 	}
 
 	void setNext(Node* link)
@@ -67,64 +60,6 @@ public:
 	void setPrevious(Node* link)
 	{
 		previous = link;
-	}
-
-	void setMiles(double milage)
-	{
-		miles = milage;
-	}
-
-	/*==The Big 5==
-	 * The copy constructor and overloaded assignment operator
-	 * aren't rewritten because the nodes don't have sole
-	 * ownership over the objects at their data pointers.
-	 * Since the nodes point to other WalkData objects,
-	 * such as a person or city, the data is shared by
-	 * multiple lists, so shallow copies are intended.
-	 * The Challenge Manager class is responsible
-	 * for freeing up the memory at those WalkData*
-	 * pointers through its destructor or its removePerson
-	 * and removeCity methods.
-	 */
-
-	/*The node itself will be deleted, like the miles it
-	 * stores, but the data at its pointer won't be.
-	 * deleted by this class
-	 */
-	~Node()
-	{
-		data = nullptr;
-	}
-
-	Node(Node&& other) noexcept
-	{
-		data = other.data;
-		miles = other.miles;
-		next = other.next;
-		previous = other.previous;
-
-		other.data = nullptr;
-		other.miles = 0;
-		other.next = nullptr;
-		other.previous = nullptr;
-	}
-
-	Node& operator=(Node&& other) noexcept
-	{
-		if (this != &other)
-		{
-			data = other.data;
-			miles = other.miles;
-			next = other.next;
-			previous = other.previous;
-
-			other.data = nullptr;
-			other.miles = 0;
-			other.next = nullptr;
-			other.previous = nullptr;
-		}
-		else cout << "Attempting to move to self!" << endl;
-		return *this;
 	}
 };
 

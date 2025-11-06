@@ -34,15 +34,15 @@ public:
 	 *
 	 * See more in Node.h
 	 */
-	LinkedList(const LinkedList& other) = delete;
-	LinkedList& operator=(const LinkedList& other) = delete;
+	LinkedList(const LinkedList& other);
+	LinkedList& operator=(const LinkedList& other);
 	~LinkedList();
 	LinkedList(LinkedList&& other) noexcept;
 	LinkedList& operator=(LinkedList&& other) noexcept;
 
 	Node* findNode(const string& name) const;
 	bool removeNode(Node* toRemove);
-	void addNode(WalkData* data, double miles);
+	void addNode(Node* data);
 	void clear();
 
 private:

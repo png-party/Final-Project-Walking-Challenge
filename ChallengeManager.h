@@ -23,7 +23,7 @@ using namespace std;
 class ChallengeManager
 {
 	LinkedList allParticipants;
-	LinkedList allCities;
+	//LinkedList allCities;
 
 public:
 	ChallengeManager();
@@ -44,13 +44,12 @@ public:
 	void createPerson(const string& name);
 	void createCity(const string& name);
 	void removePerson(const string& name);
-	void removeCity(const string& name);
+	bool removeCity(const string& cityName);
 
 	void getPersonStats(const string& name) const;
-	Person* findPerson(const string& name) const;
+	//Person* findPerson(const string& name) const;
 	Person* getMostActive() const;
 	Hood* findCity(const string& name) const;
-	void recordWalk(Hood* h, Person* p, double milesWalked) const;
 };
 
 #endif
