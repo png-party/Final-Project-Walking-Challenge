@@ -11,12 +11,20 @@ Collaboration:
 */
 
 #include "Person.h"
+#include "ChallengeManager.h"
 #include <vector>
 #include <iostream>
 
 using namespace std;
 int Person::lastId = 150;
-vector<string> allCities = { "Old Towne", "El Modena", "Orange Hills", "Santiago Creek", "Villa Park Area", "North El Camino Real" };
+vector<string> Person::allCities = { "Old Towne", "El Modena", "Orange Hills", "Santiago Creek", "Villa Park Area", "North El Camino Real" };
+
+Person::Person()
+{
+	name = "No name";
+	totalMiles = 0;
+	userId = -1;
+}
 
 Person::Person(const string& personName)
 {
@@ -119,7 +127,9 @@ void Person::recordWalk(unsigned int cityIndex, double milesWalked)
 		return;
 	}
 	//Check if they've walked there before, or resize the list
-	if (personList.size() - 1 < cityIndex) personList.resize(cityIndex);
+	if (personList.size() <= cityIndex) {
+		personList.resize(cityIndex + 1);
+	}
 	personList[cityIndex] = milesWalked;
 	totalMiles += milesWalked;
 	

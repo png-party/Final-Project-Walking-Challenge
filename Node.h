@@ -51,16 +51,6 @@ public:
 	{
 		data = p;
 	}
-
-	void setNext(Node* link)
-	{
-		next = link;
-	}
-
-	void setPrevious(Node* link)
-	{
-		previous = link;
-	}
 };
 
 #endif NODE_H

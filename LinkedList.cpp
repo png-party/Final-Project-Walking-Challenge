@@ -37,16 +37,121 @@ Node* LinkedList::getLast() const
 	return last;
 }
 
-LinkedList::LinkedList(const LinkedList& other)
+void LinkedList::clear()
 {
+	Node* current = first;
+	while (current)
+	{
+		Node* next = current->next;
+
+		delete current;
+		current = next;
+	}
+	first = nullptr;
+	last = nullptr;
+	nodeCount = 0;
 }
 
+//Copy constructor
+LinkedList::LinkedList(const LinkedList& other)
+{
+	//Check if copying an empty list
+	if (!other.first)
+	{
+		first = nullptr;
+		last = nullptr;
+		nodeCount = 0;
+	}
+	else
+	{
+		nodeCount = other.nodeCount;
+		Node* otherptr = other.first;
+
+		Node* current = new Node(*otherptr->getData());
+		if (current) first = current; //Only attach if valid
+		while (current)
+		{
+			Node* temp = new Node(*otherptr->next->getData());
+			if (!temp) break; //Don't copy anymore if error occurs
+			//Link new node to previous node
+			temp->previous = current;
+			//Connect current node to new node
+			current->next = temp;
+
+			//Keep traversing
+			current = current->next;
+			otherptr = otherptr->next;
+			
+		}
+		last = current;
+	}
+}
+/*Overloaded assignment operator*/
 LinkedList& LinkedList::operator=(const LinkedList& other)
 {
 	if (this != &other)
 	{
-		
+		clear();
+		nodeCount = other.nodeCount;
+		Node* otherptr = other.first;
+
+		Node* current = new Node(*otherptr->getData());
+		if (current) first = current;
+		while (current)
+		{
+			Node* temp = new Node(*otherptr->next->getData());
+			if (!temp) break; //Stop copying if error occurs 
+			//Link new node to previous node
+			temp->previous = current;
+			//Connect new node to current node
+			current->next = temp;
+
+			//Keep traversing both lists 
+			current = current->next;
+			otherptr = otherptr->next;
+
+		}
+		last = current;
 	}
+	else cout << "Attempting self-assignment!" << endl;
+	return *this;
+}
+
+/*Destructor*/
+LinkedList::~LinkedList()
+{
+	clear();
+}
+
+/*Move constructor*/
+LinkedList::LinkedList(LinkedList&& other) noexcept
+{
+	first = other.first;
+	last = other.last;
+	nodeCount = other.nodeCount;
+
+	other.first = nullptr;
+	other.last = nullptr;
+	other.nodeCount = 0;
+}
+
+/*Move assignment operator*/
+LinkedList& LinkedList::operator=(LinkedList&& other) noexcept
+{
+	if (this != &other)
+	{
+		clear();
+
+		first = other.first;
+		last = other.last;
+		nodeCount = other.nodeCount;
+
+		other.first = nullptr;
+		other.last = nullptr;
+		other.nodeCount = 0;
+	}
+	else cout << "Attempting self-assignment!" << endl;
+	return *this;
 }
 
 Node* LinkedList::findNode(const string& name) const
@@ -85,11 +190,10 @@ void LinkedList::addNode(Node* data)
 	nodeCount++;
 }
 
-bool LinkedList::removeNode(Node* toRemove)
+bool LinkedList::removeNode(const string& name)
 {
+	Node* toRemove = findNode(name);
 	if (!toRemove || !first || nodeCount == 0) return false;
-
-	Node* current = first;
 
 	//check if removing the only node in the list
 	if (nodeCount == 1)
@@ -109,77 +213,17 @@ bool LinkedList::removeNode(Node* toRemove)
 	}
 	else
 	{
-		while (current)
-		{
-			if (current == toRemove)
-			{
-				//Get address of node after the one to remove
-				Node* otherNode = current->next;
+		//Get address of next node after the one to remove
+		Node* otherNode = toRemove->next;
 
-				//Attach to previous node
-				otherNode->previous = current->previous;
+		//Attach to previous node
+		otherNode->previous = toRemove->previous;
 
-				//Make previous node point to next node over
-				current->previous->next = otherNode;
-			}
-			current = current->next;
-		}
+		//Make previous node point to next node over
+		toRemove->previous->next = otherNode;
 	}
 	delete toRemove;
 	nodeCount--;
 	return true;
 }
 
-void LinkedList::clear()
-{
-	Node* current = first;
-	while (current)
-	{
-		Node* toDelete = current;
-		current = current->next;
-		delete toDelete;
-	}
-	first = nullptr;
-	last = nullptr;
-	nodeCount = 0;
-}
-
-LinkedList::~LinkedList()
-{
-	clear();
-}
-
-//Move constructor
-LinkedList::LinkedList(LinkedList&& other) noexcept
-{
-	//Steal the other object's pointers
-	nodeCount = other.nodeCount;
-	first = other.first;
-	last = other.last;
-
-	//Modify the other object
-	other.nodeCount = 0;
-	other.first = nullptr;
-	other.last = nullptr;
-}
-
-//Move assignment
-LinkedList& LinkedList::operator=(LinkedList&& other) noexcept
-{
-	if (this != &other)
-	{
-		//Delete existing nodes
-		clear();
-		//Steal the other object's pointers
-		nodeCount = other.nodeCount;
-		first = other.first;
-		last = other.last;
-
-		//Modify the other object
-		other.nodeCount = 0;
-		other.first = nullptr;
-		other.last = nullptr;
-	}
-	else cout << "Attempting to move to self!" << endl;
-	return *this;
-}

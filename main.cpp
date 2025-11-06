@@ -22,6 +22,7 @@ int main()
 	ChallengeManager cm;
 
 	cm.loadData(file);
+	cm.printMostActive();
 	/*
 	LinkedList x = LinkedList();
 

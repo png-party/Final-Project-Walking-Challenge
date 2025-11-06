@@ -20,19 +20,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChallengeManager.h" />
-    <ClInclude Include="Hood.h" />
     <ClInclude Include="LinkedList.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="Person.h" />
-    <ClInclude Include="WalkData.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChallengeManager.cpp" />
-    <ClCompile Include="Hood.cpp" />
     <ClCompile Include="LinkedList.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Person.cpp" />
-    <ClCompile Include="WalkData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="data.txt" />

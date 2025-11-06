@@ -15,7 +15,6 @@ Collaboration:
 
 #include "LinkedList.h"
 #include "Person.h"
-#include "Hood.h"
 #include <string>
 #include <fstream>
 using namespace std;
@@ -23,33 +22,22 @@ using namespace std;
 class ChallengeManager
 {
 	LinkedList allParticipants;
-	//LinkedList allCities;
 
 public:
 	ChallengeManager();
-	~ChallengeManager();
-
-	/*Although we could technically make new copies of all of the data within
-	 * a challenge manager, the copy constructor and move assignment are still
-	 * deleted because it's not very efficient or compatible with the current
-	 * current design, and moving over the data would be better anyways. */
-	ChallengeManager(const ChallengeManager& other) = delete;
-	ChallengeManager& operator=(const ChallengeManager& other) = delete;
-
-	/*Move instead of copying*/
-	ChallengeManager(ChallengeManager&& other) noexcept = default;
-	ChallengeManager& operator=(ChallengeManager&& other) noexcept = default;
 
 	void loadData(ifstream& file);
 	void createPerson(const string& name);
 	void createCity(const string& name);
 	void removePerson(const string& name);
-	bool removeCity(const string& cityName);
+	bool removeCity(const string& cityName) const;
 
 	void getPersonStats(const string& name) const;
-	//Person* findPerson(const string& name) const;
-	Person* getMostActive() const;
-	Hood* findCity(const string& name) const;
+	void printMostActive() const;
+	static int getCityIndex(const string& name);
+
+private:
+	Person* getPerson(const string& name) const;
 };
 
 #endif

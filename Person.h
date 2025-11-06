@@ -21,7 +21,7 @@ class ChallengeManager;
 
 class Person
 {
-	friend class ChallengeManager;
+	
 	static int lastId;
 	
 	string name;
@@ -31,8 +31,10 @@ class Person
 
 protected:
 	static vector<string> allCities;
+	friend class ChallengeManager;
 
 public:
+	Person();
 	Person(const string& personName);
 	Person(const string& personName, int identity);
 	string getName() const;

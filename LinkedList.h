@@ -39,16 +39,16 @@ public:
 	~LinkedList();
 	LinkedList(LinkedList&& other) noexcept;
 	LinkedList& operator=(LinkedList&& other) noexcept;
-
-	Node* findNode(const string& name) const;
-	bool removeNode(Node* toRemove);
 	void addNode(Node* data);
+	bool removeNode(const string& name);
+	Node* findNode(const string& name) const;
 	void clear();
 
 private:
 	Node* first;
 	Node* last;
 	int nodeCount;
+	
 };
 
 
