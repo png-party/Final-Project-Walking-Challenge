@@ -16,28 +16,37 @@ Collaboration:
 #include "LinkedList.h"
 #include "Person.h"
 #include <string>
+#include <vector>
 #include <fstream>
 using namespace std;
 
 class ChallengeManager
 {
-	LinkedList allParticipants;
 
 public:
+
 	ChallengeManager();
 
 	void loadData(ifstream& file);
 	void createPerson(const string& name);
 	void createCity(const string& name);
 	void removePerson(const string& name);
-	bool removeCity(const string& cityName) const;
+	bool removeCity(const string& cityName);
+	void clearParticipants();
 
+	bool logWalk(const string& personName, const string& cityName, double miles) const;
+	void printPersonWalks(const string& personName) const;
 	void getPersonStats(const string& name) const;
 	void printMostActive() const;
-	static int getCityIndex(const string& name);
+	void printAllParticipants() const;
 
 private:
+	LinkedList allParticipants;
+	vector<string> allCities = { "Old Towne", "El Modena", "Orange Hills", "Santiago Creek", "Villa Park Area", "North El Camino Real" };
+	int lastId;
+
 	Person* getPerson(const string& name) const;
+	int getCityIndex(const string& name) const; 
 };
 
 #endif

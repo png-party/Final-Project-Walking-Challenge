@@ -67,21 +67,31 @@ LinkedList::LinkedList(const LinkedList& other)
 		nodeCount = other.nodeCount;
 		Node* otherptr = other.first;
 
-		Node* current = new Node(*otherptr->getData());
-		if (current) first = current; //Only attach if valid
-		while (current)
+		/* The nothrow argument with the new operator prevents
+		 * an error from being thrown if memory allocation fails
+		 * Instead, it sets the pointer to nullptr  */
+		Node* current = new (std::nothrow) Node(*otherptr->getData());
+		/* Points to valid data or nullptr if memory allocation fails,
+		 * preventing loop from starting if it fails */
+		first = current; 
+		while (current && otherptr->next)
 		{
-			Node* temp = new Node(*otherptr->next->getData());
-			if (!temp) break; //Don't copy anymore if error occurs
-			//Link new node to previous node
-			temp->previous = current;
-			//Connect current node to new node
-			current->next = temp;
+			if (Node* temp = new (std::nothrow) Node(*otherptr->next->getData()))
+			{
+				//Link new node to previous node
+				temp->previous = current;
+				//Connect current node to new node
+				current->next = temp;
 
-			//Keep traversing
-			current = current->next;
-			otherptr = otherptr->next;
-			
+				//Keep traversing
+				current = current->next;
+				otherptr = otherptr->next;
+			}
+			else  //Break loop if memory allocation fails
+			{
+				cout << "Memory could not be allocated!" << endl;
+				break;
+			}
 		}
 		last = current;
 	}
@@ -95,21 +105,26 @@ LinkedList& LinkedList::operator=(const LinkedList& other)
 		nodeCount = other.nodeCount;
 		Node* otherptr = other.first;
 
-		Node* current = new Node(*otherptr->getData());
-		if (current) first = current;
-		while (current)
+		Node* current = new (nothrow) Node(*otherptr->getData());
+		first = current;
+		while (current && otherptr->next)
 		{
-			Node* temp = new Node(*otherptr->next->getData());
-			if (!temp) break; //Stop copying if error occurs 
-			//Link new node to previous node
-			temp->previous = current;
-			//Connect new node to current node
-			current->next = temp;
+			if (Node* temp = new (nothrow) Node(*otherptr->next->getData()))
+			{
+				//Link new node to previous node
+				temp->previous = current;
+				//Connect new node to current node
+				current->next = temp;
 
-			//Keep traversing both lists 
-			current = current->next;
-			otherptr = otherptr->next;
-
+				//Keep traversing both lists 
+				current = current->next;
+				otherptr = otherptr->next;
+			}
+			else  //Break loop if memory allocation fails
+			{
+				cout << "Memory could not be allocated!" << endl;
+				break;
+			}
 		}
 		last = current;
 	}
@@ -194,7 +209,6 @@ bool LinkedList::removeNode(const string& name)
 {
 	Node* toRemove = findNode(name);
 	if (!toRemove || !first || nodeCount == 0) return false;
-
 	//check if removing the only node in the list
 	if (nodeCount == 1)
 	{
@@ -205,11 +219,13 @@ bool LinkedList::removeNode(const string& name)
 	else if (toRemove == first)
 	{
 		first = first->next;
+		first->previous = nullptr; //Prevent dangling pointer to freed memory
 	}
 	//Check if removing the last node
 	else if (toRemove == last)
 	{
 		last = last->previous;
+		last->next = nullptr; //Prevent dangling pointer to freed memory
 	}
 	else
 	{
@@ -222,6 +238,7 @@ bool LinkedList::removeNode(const string& name)
 		//Make previous node point to next node over
 		toRemove->previous->next = otherNode;
 	}
+	//Finally, delete the node
 	delete toRemove;
 	nodeCount--;
 	return true;

@@ -15,14 +15,14 @@ Collaboration:
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <vector>
 
 using namespace std;
-
 ChallengeManager::ChallengeManager()
 {
 	cout << "Challenge Manager created." << endl;
+	lastId = 151;
 }
-
 
 void ChallengeManager::loadData(ifstream& file)
 {
@@ -31,14 +31,16 @@ void ChallengeManager::loadData(ifstream& file)
 		cout << "Error: could not open file" << endl;
 		return;
 	}
-	//These objects are created based on data.txt
+	/* The participants' data is based on the selected text file,
+	 * but their recorded cities are based on the six given cities
+	 * from the assignment */
 	string s;
 	while (getline(file, s))
 	{
 		string name;
 		int field = 1;
 		Person p = Person("temp");
-		for (unsigned int i = 0; i < s.length(); i++) //Comparing .length() gives a warning if i isn't an unsigned int
+		for (int i = 0; i < (int) s.length(); i++)
 		{
 			if (isspace(s[i]))
 			{
@@ -65,7 +67,7 @@ void ChallengeManager::loadData(ifstream& file)
 				{
 					double ot = stod(s.substr(1, i));
 					s = s.substr(i, s.length() - i + 1);
-					if (ot > 0) p.recordWalk(0, ot);
+					if (ot > 0) p.recordWalk(0, ot, allCities);
 					i = 0;
 					field++;
 				}
@@ -74,7 +76,7 @@ void ChallengeManager::loadData(ifstream& file)
 				{
 					double em = stod(s.substr(1, i));
 					s = s.substr(i, s.length() - i + 1);
-					if (em > 0) p.recordWalk(1, em);
+					if (em > 0) p.recordWalk(1, em, allCities);
 					i = 0;
 					field++;
 				}
@@ -83,7 +85,7 @@ void ChallengeManager::loadData(ifstream& file)
 				{
 					double oh = stod(s.substr(0, i));
 					s = s.substr(i + 1, s.length() - i + 1);
-					if (oh > 0) p.recordWalk(2, oh);
+					if (oh > 0) p.recordWalk(2, oh, allCities);
 					i = 0;
 					field++;
 				}
@@ -92,7 +94,7 @@ void ChallengeManager::loadData(ifstream& file)
 				{
 					double sc = stod(s.substr(0, i));
 					s = s.substr(i + 1, s.length() - i + 1);
-					if (sc > 0) p.recordWalk(3, sc);
+					if (sc > 0) p.recordWalk(3, sc, allCities);
 					i = 0;
 					field++;
 				}
@@ -101,80 +103,138 @@ void ChallengeManager::loadData(ifstream& file)
 				{
 					double vp = stod(s.substr(0, i));
 					s = s.substr(i, s.length() - i);
-					if (vp > 0) p.recordWalk(4, vp);
+					if (vp > 0) p.recordWalk(4, vp, allCities);
 					double ec = stod(s.substr(1, s.length() - 1));
-					if (ec > 0) p.recordWalk(5, ec);
+					if (ec > 0) p.recordWalk(5, ec, allCities);
 				}
 			}
 		}
-		cout << p.getTotalMiles() << endl;
-		allParticipants.addNode(new Node(p));
+		if (Node* newUser = new (nothrow) Node(p))
+		{
+			allParticipants.addNode(newUser);
+		}
+		else {
+			cout << "Memory allocation failed!" << endl;
+			break;
+		}
 	}
 }
 
 void ChallengeManager::createPerson(const string& name)
 {
-	Node* newUser = new Node(Person(name));
-	allParticipants.addNode(newUser);
+	cout << "Creating participant \"" << name << "\"..." << endl;
+	if (Node* newUser = new (nothrow) Node(Person(name, lastId)))
+	{
+		allParticipants.addNode(newUser);
+		lastId++;
+	}
+	else cout << "Memory allocation failed!" << endl;
+
 }
 
 void ChallengeManager::createCity(const string& name)
 {
-	if (getCityIndex(name) == -1) Person::allCities.push_back(name);
+	cout << "Creating city \"" << name << "\"..." << endl;
+	if (getCityIndex(name) == -1) allCities.push_back(name);
 	else cout << "That city already exists!" << endl;
 }
 
 void ChallengeManager::removePerson(const string& name)
 {
+	cout << "Removing \"" << name << "\"..." << endl;
+	if (allParticipants.removeNode(name)) cout << "==>Participant \"" << name << "\" was found and removed!" << endl;
+	else cout << "==>Participant \"" << name << "\" could not be found and removed" << endl;
 	allParticipants.removeNode(name);
 }
 
-/*This is const because it doesn't actually modify anything from CM*/
-bool ChallengeManager::removeCity(const string& cityName) const
+bool ChallengeManager::removeCity(const string& cityName)
 {
 	cout << "Removing \"" << cityName << "\"..." << endl;
+	int i = getCityIndex(cityName);
+	if (i == -1) //Exit if index wasn't found
+	{
+		cout << "==>Neighborhood \"" << cityName << "\" was not found!" << endl;
+		return false;
+	}
+
+	//Remove city from people's data
+	Node* current = allParticipants.getFirst();
+	if (current)
+	{
+		while (current)
+		{
+			Person* p = current->getData();
+			//Only modify people who have indexes affected by removing the city
+			if ((int)p->getList().size() - 1 >= i)
+			{
+				//Update their total miles
+				p->setTotalMiles(p->getTotalMiles() - p->getList()[i]);
+				//Remove index from their list
+				p->getList().erase(p->getList().begin() + i);
+			}
+			current = current->getNext();
+		}
+	}
+	
+	//Remove entry from list of cities
+	allCities.erase(allCities.begin() + i);
+	cout << "==>Neighborhood \"" << cityName << "\" was found and removed!" << endl;
+	return true;
+}
+
+void ChallengeManager::clearParticipants()
+{
+	cout << "Clearing all participants..." << endl;
+	allParticipants.clear();
+}
+
+bool ChallengeManager::logWalk(const string& personName, const string& cityName, double miles) const
+{
+	Person* p = getPerson(personName);
 	int i = getCityIndex(cityName);
 	if (i == -1) //Exit if index wasn't found
 	{
 		cout << "==>Neighborhood \"" << cityName << "\" was not found" << endl;
 		return false;
 	}
-	//Remove entry from list of cities
-	Person::allCities.erase(Person::allCities.begin() + i);
-
-	//Remove city from people's data
-	Node* current = allParticipants.getFirst();
-	while (current)
+	if (!p)
 	{
-		Person* p = current->getData();
-		//Only modify people who have indexes affected by removing the city
-		if (p->getList().size() - 1 >= i)
-		{
-			p->getList().erase(p->getList().begin() + i);
-		}
-		current = current->getNext();
+		cout << "==>Participant \"" << personName << "\" was not found" << endl;
+		return false;
 	}
-	cout << "==>Neighborhood \"" << cityName << "\" was found and removed!" << endl;
+	p->recordWalk(i, miles, allCities);
 	return true;
+
+}
+
+void ChallengeManager::printPersonWalks(const string& personName) const
+{
+	Person* p = getPerson(personName);
+	if (!p)
+	{
+		cout << "==>Participant \"" << personName << "\" was not found" << endl;
+		return;
+	}
+	p->printPersonList(allCities);
 }
 
 void ChallengeManager::getPersonStats(const string& name) const
 {
 	Person* p = getPerson(name);
-	cout << "\n====" << p->getName() << "'s statistics====\nTotal miles walked: " << p->getTotalMiles() <<
-		"\nTotal neighborhoods visited: " << p->getList().size() << endl;
-	p->printMinMaxWalks();
-	cout << "=====================\n" << endl;
+	p->printStats(allCities);
 }
 
 void ChallengeManager::printMostActive() const
 {
+	cout << "Looking for most active participant..." << endl;
 	Person* p = allParticipants.getFirst()->getData();
-	if (!p)
-	{
-		cout << "No one has participated in the challenge yet!" << endl;
-	}
 	Node* current = allParticipants.getFirst();
+	if (!p || !current)
+	{
+		cout << "==>No one has participated in the challenge yet!" << endl;
+		return;
+	}
+	
 	while (current)
 	{
 		if (current->getData()->getTotalMiles() > p->getTotalMiles())
@@ -183,16 +243,34 @@ void ChallengeManager::printMostActive() const
 		}
 		current = current->getNext();
 	}
-	cout << "Participant " << p->getName() << " has walked the most miles with a total of " << p->getTotalMiles() <<
+	if (p->getTotalMiles() >= 0) cout << "==>Participant " << p->getName() << " has walked the most miles with a total of " << p->getTotalMiles() <<
 		" miles walked!" << endl;
+	else cout << "==>No one has recorded a walk longer than 0 miles yet!" << endl;
 }
 
-
-int ChallengeManager::getCityIndex(const string& name)
+void ChallengeManager::printAllParticipants() const
 {
-	for (int i = 0; i < Person::allCities.size(); i++)
+	cout << "\n======================Today's Walking Challenge=====================" << endl;
+	int i = 1;
+	Node* current = allParticipants.getFirst();
+	if (!current) cout << "No one has participated in the challenge yet!" << endl;
+	else
 	{
-		if (Person::allCities[i] == name) return i;
+		while (current)
+		{
+			cout << "\t" << i << ".) " << current << endl;
+			i++;
+			current = current->getNext();
+		}
+	}
+	cout << "====================================================================" << endl;
+}
+
+int ChallengeManager::getCityIndex(const string& name) const
+{
+	for (int i = 0; i < (int)allCities.size(); i++)
+	{
+		if (allCities[i] == name) return i;
 	}
 	return -1;
 }

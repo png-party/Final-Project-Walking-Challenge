@@ -27,18 +27,18 @@ public:
 	Node* getFirst() const;
 	Node* getLast() const;
 
-	/*==The Big 5==
-	 *The copy constructor and overloaded assignment operator
-	 * are deleted to avoid copying the data or creating
-	 * shallow copies of the linked list's pointers.
-	 *
-	 * See more in Node.h
-	 */
+	/* ==The Big 5== */
+	//Copy constructor
 	LinkedList(const LinkedList& other);
+	//Overloaded assignment operator
 	LinkedList& operator=(const LinkedList& other);
+	//Destructor
 	~LinkedList();
+	//Move constructor
 	LinkedList(LinkedList&& other) noexcept;
+	//Overloaded move operator
 	LinkedList& operator=(LinkedList&& other) noexcept;
+
 	void addNode(Node* data);
 	bool removeNode(const string& name);
 	Node* findNode(const string& name) const;

@@ -25,7 +25,7 @@ class Node
 	Person data;
 
 public:
-	Node(Person p)
+	Node(const Person& p)
 	{
 		data = p;
 		next = nullptr;
@@ -51,6 +51,13 @@ public:
 	{
 		data = p;
 	}
+	friend ostream& operator<<(ostream& out, const Node* other)
+	{
+		if (!other) out << "Null value" << endl;
+		else out << other->data;
+		return out;
+	}
+
 };
 
 #endif NODE_H

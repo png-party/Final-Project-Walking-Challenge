@@ -21,18 +21,6 @@ class ChallengeManager;
 
 class Person
 {
-	
-	static int lastId;
-	
-	string name;
-	double totalMiles;
-	int userId;
-	vector<double> personList;
-
-protected:
-	static vector<string> allCities;
-	friend class ChallengeManager;
-
 public:
 	Person();
 	Person(const string& personName);
@@ -46,11 +34,17 @@ public:
 	void setTotalMiles(double miles);
 	void setUserId(int identity);
 
-	void printPersonList() const;
-	void printMinMaxWalks() const;
-	void printStats() const;
-	void recordWalk(unsigned int cityIndex, double milesWalked);
-	friend ostream& operator<<(ostream& out, const Person& person);
+	friend ostream& operator<<(ostream& out, const Person& p);
+protected:
+	friend ChallengeManager;
+	void printPersonList(const vector<string>& allCities) const;
+	void recordWalk(int cityIndex, double milesWalked, const vector<string>& allCities);
+	void printStats(const vector<string>& allCities) const;
+private:
+	string name;
+	double totalMiles;
+	int userId;
+	vector<double> personList;
 };
 
 #endif
