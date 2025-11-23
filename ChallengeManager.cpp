@@ -136,16 +136,22 @@ void ChallengeManager::loadData(ifstream& file)
 	}
 }
 
+/* Adding participants now takes O(1) on average
+ * Previously, with the linked list, the program needed to
+ * traverse the entire list to check that the added person
+ * wasn't a duplicate. Now the unordered map checks for
+ * duplicate keys while inserting at the specific position */
 void ChallengeManager::addPerson(const string& name)
 {
 	cout << "Adding participant \"" << name << "\"..." << endl;
 
 	/* Returns a pair: {first = key-value iterator, second = boolean for success} */
 	auto inserted = personMap.insert({name, Person(name, lastId)});
-	lastId++;
-	if (inserted.second) cout << "==>Participant \"" << name << "\" was successfully added!" << endl;
-	else  cout << "==>Participant \"" << name << "\" could not be added" << endl;
-
+	if (inserted.second) {
+		cout << "==>Participant \"" << name << "\" was successfully added!" << endl;
+		lastId++;
+	}
+	else cout << "==>Participant \"" << name << "\" could not be added" << endl;
 }
 
 void ChallengeManager::addCity(const string& name)
@@ -159,15 +165,21 @@ void ChallengeManager::addCity(const string& name)
 	else cout << "===>That city already exists!" << endl;
 }
 
+/* Deleting a participant now takes O(1) on average instead of O(n)
+ * because the program no longer needs to look through every single node
+ * for the corresponding person. */
 void ChallengeManager::deletePerson(const string& name)
 {
-
 	cout << "Removing \"" << name << "\"..." << endl;
 	/* Returns # of elements removed (either 0 or 1) */
 	if (personMap.erase(name) == 1) cout << "==>Participant \"" << name << "\" was successfully removed!" << endl;
 	else cout << "==>Participant \"" << name << "\" could not be found and removed" << endl;
 }
 
+/* Deleting a city still takes O(n) for getting the valid city index
+ * and O(n) to check every participant if they need to have their walking
+ * data vector modified, but now traversing is more convenient with a
+ * for each loop */
 void ChallengeManager::deleteCity(const string& name)
 {
 	cout << "Removing \"" << name << "\"..." << endl;
@@ -183,7 +195,7 @@ void ChallengeManager::deleteCity(const string& name)
 		//Access person object within the pair
 		Person* p = &current.second;
 		//Only modify people who have indexes affected by removing the city
-		if ((int )p->getList().size() - 1 >= cityIndex)
+		if ((int)p->getList().size() - 1 >= cityIndex)
 		{
 			//Update their total miles
 			p->setTotalMiles(p->getTotalMiles() - p->getList()[cityIndex]);
