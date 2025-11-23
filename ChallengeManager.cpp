@@ -135,7 +135,8 @@ void ChallengeManager::loadData(ifstream& file)
 /* Adding participants now takes O(1) on average
  * Previously, with the linked list, the program needed to
  * traverse the entire list to check that the added person
- * wasn't a duplicate. Now the unordered map checks for
+ * wasn't a duplicate before it could append the person to
+ * the end of the list. Now the unordered map checks for
  * duplicate keys while inserting at the specific position */
 void ChallengeManager::addPerson(const string& name)
 {
@@ -158,7 +159,7 @@ void ChallengeManager::addCity(const string& name)
 		allCities.push_back(name);
 		cout << "==>City \"" << name << "\" was successfully added!" << endl;
 	}
-	else cout << "===>That city already exists!" << endl;
+	else cout << "==>That city already exists!" << endl;
 }
 
 /* Deleting a participant now takes O(1) on average instead of O(n)
@@ -173,9 +174,9 @@ void ChallengeManager::deletePerson(const string& name)
 }
 
 /* Deleting a city still takes O(n) for getting the valid city index
- * and O(n) to check every participant if they need to have their walking
- * data vector modified, but now traversing is more convenient with a
- * for each loop */
+ * and O(n) to check if every participant needs to have their vector
+ * containing their walking data modified once the city is removed,
+ * but now traversing is more convenient with a for each loop */
 void ChallengeManager::deleteCity(const string& name)
 {
 	cout << "Removing \"" << name << "\"..." << endl;
@@ -191,7 +192,7 @@ void ChallengeManager::deleteCity(const string& name)
 		//Access person object within the pair
 		Person* p = &current.second;
 		//Only modify people who have indexes affected by removing the city
-		if ((int)p->getList().size() - 1 >= cityIndex)
+		if ((int) p->getList().size() - 1 >= cityIndex)
 		{
 			//Update their total miles
 			p->setTotalMiles(p->getTotalMiles() - p->getList()[cityIndex]);
@@ -204,17 +205,22 @@ void ChallengeManager::deleteCity(const string& name)
 
 }
 
+/* Removing all of the participants still takes O(n)
+ * for both linked lists and unordered maps, so the
+ * new implementation didn't change the time complexity */
 void ChallengeManager::clearParticipants()
 {
 	cout << "Clearing all participants..." << endl;
 	if (personMap.empty())
 	{
-		cout << "The unordered map is already empty.\n";
+		cout << "==>The unordered map is already empty.\n";
 	}else{
 		personMap.clear();
 	}
 }
 
+/* Since unordered maps are good for searching quickly,
+ * getting a person's stats now takes O(1) on average */
 void ChallengeManager::getPersonStats(const string& name)
 {
 	auto p = personMap.find(name);
@@ -239,6 +245,9 @@ Person* ChallengeManager::getPersonObject(const string& name)
 	return &personMap.find(name)->second;
 }
 
+/* Logging a walk is now faster since getting the relevant person now takes O(1) on
+ * average. However, we still need to traverse the allCities vector to make sure the
+ * city is valid before attempting to log the walk */
 bool ChallengeManager::logWalk(const string& personName, const string& cityName, double miles)
 {
 	auto p = personMap.find(personName);
@@ -247,7 +256,6 @@ bool ChallengeManager::logWalk(const string& personName, const string& cityName,
 		cout << "==>Participant \"" << personName << "\" was not found" << endl;
 		return false;
 	}
-
 	int i = getCityIndex(cityName);
 	if (i == -1) //Exit if index wasn't found
 	{
@@ -264,32 +272,30 @@ void ChallengeManager::printPersonWalks(const string& personName) const
 	if (p == personMap.end())
 	{
 		cout << "==>Participant \"" << personName << "\" was not found" << endl;
-		return;
 	}
-	p->second.printPersonList(allCities);
+	else p->second.printPersonList(allCities);
 }
-
-void ChallengeManager::getPersonStats(const string& name) const
-{
-	auto temp = personMap.find(name);
-	if (temp == personMap.end()) cout << "Participant was not found!" << endl;
-	temp->second.printStats(allCities);
-} 
 
 void ChallengeManager::printMostActive() const
 {
-	int most_active_total_miles = 0;
+	cout << "Finding the most active participant..." << endl;
+	double most_active_total_miles = 0;
 	string most_active_person = "";
+	if (personMap.empty())
+	{
+		cout << "==>No one has participated in the challenge yet!" << endl;
+		return;
+	}
+
 	for(const auto& person: personMap){
 		if(person.second.getTotalMiles() > most_active_total_miles)
 		{
 			most_active_total_miles = person.second.getTotalMiles();
 			most_active_person = person.first;
-
 		}
 	}
-	cout << "The most active person is: " << most_active_person << endl;
-	cout << "Total miles of: " << most_active_total_miles;
+	if (most_active_total_miles > 0) cout << "==>The most active person is: " << most_active_person << " with a total of " << most_active_total_miles << " miles recorded! " << endl;
+	else cout << "==>No participant has recorded a walk longer than 0 miles!" << endl;
 } 
 
 int ChallengeManager::getCityIndex(const string& name) const
