@@ -12,40 +12,51 @@ Collaboration:
 #ifndef CHALLENGEMANAGER_H
 #define CHALLENGEMANAGER_H
 
-#include "LinkedList.h"
 #include "Person.h"
+#include "LinkedList.h"
 #include <string>
 #include <vector>
 #include <fstream>
+#include <unordered_map>
 using namespace std;
-
 class ChallengeManager
 {
 
 public:
-
 	ChallengeManager();
-
 	void loadData(ifstream& file);
+	void addPerson(const string& name);
+	void addCity(const string& name);
+	void deletePerson(const string& name);
+	void deleteCity(const string& name);
+	void getPersonStatsMap(const string& name);
+	void printPersonMap() const;
+	Person* getPersonObject(const string& name);
+
+	//To Do:
+	void printMostActive() const;
+	void clearParticipants();
+	//delete all cities
+
 	void createPerson(const string& name);
 	void createCity(const string& name);
 	void removePerson(const string& name);
 	bool removeCity(const string& cityName);
-	void clearParticipants();
 
-	bool logWalk(const string& personName, const string& cityName, double miles) const;
+	bool logWalk(const string& personName, const string& cityName, double miles);
 	void printPersonWalks(const string& personName) const;
 	void getPersonStats(const string& name) const;
-	void printMostActive() const;
+
+	
 	void printAllParticipants() const;
 
 private:
 	LinkedList allParticipants;
-	vector<string> allCities = { "Old Towne", "El Modena", "Orange Hills", "Santiago Creek", "Villa Park Area", "North El Camino Real" };
+	unordered_map<string, Person> personMap;
+	vector<string> allCities = { "Old Towne", "El Modena", "Orange Hills", "Santiago Creek", "Villa Park Area", "North El Camino Real"};
 	int lastId;
-
 	Person* getPerson(const string& name) const;
-	int getCityIndex(const string& name) const; 
+	int getCityIndex(const string& name) const;
 };
 
 #endif

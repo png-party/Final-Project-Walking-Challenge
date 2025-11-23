@@ -1,8 +1,8 @@
 /*
-Nicole Sirbu, Nicolas Grant, Ramon Aguilera
+Nicole Sirbuy
 CMPR 131 - Fall 2025
-October 26th, 2025
-Final Project #1
+2025-11-21
+Final Project #2
 Collaboration:
 	https://www.geeksforgeeks.org/cpp/how-to-read-from-a-file-in-cpp/
 	https://www.hlsl.co.uk/blog/2017/12/1/c-noexcept-and-move-constructors-effect-on-performance-in-stl-containers

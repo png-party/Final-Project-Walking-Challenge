@@ -15,7 +15,9 @@ Collaboration:
 #include <string>
 #include <vector>
 
+class Person;
 using namespace std;
+
 class ChallengeManager;
 
 class Person
@@ -24,6 +26,7 @@ public:
 	Person();
 	Person(const string& personName);
 	Person(const string& personName, int identity);
+	Person(const Person&) = default;
 	string getName() const;
 	double getTotalMiles() const;
 	int getUserId() const;
@@ -32,8 +35,11 @@ public:
 	void setName(const string& newName);
 	void setTotalMiles(double miles);
 	void setUserId(int identity);
+	bool operator==(const Person& other) const;
 
 	friend ostream& operator<<(ostream& out, const Person& p);
+
+
 protected:
 	friend ChallengeManager;
 	void printPersonList(const vector<string>& allCities) const;
