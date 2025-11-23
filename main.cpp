@@ -1,12 +1,13 @@
 /*
-Nicole Sirbu, Nicolas Grant, Ramon Aguilera
+Christiandior Falucho, Nicole Sirbu, Mohamed Ziq, Nicholas Donaldson
 CMPR 131 - Fall 2025
-October 26th, 2025
-Final Project #1
+November 22nd, 2025
+Final Project #2
 Collaboration:
-    https://www.geeksforgeeks.org/cpp/how-to-read-from-a-file-in-cpp/
-    https://www.hlsl.co.uk/blog/2017/12/1/c-noexcept-and-move-constructors-effect-on-performance-in-stl-containers
-    https://www.geeksforgeeks.org/cpp/if-memory-allocation-using-new-is-failed-in-c-then-how-it-should-be-handled/
+	https://en.cppreference.com/w/cpp/container/unordered_map.html
+	https://en.cppreference.com/w/cpp/utility/pair.html
+	https://www.geeksforgeeks.org/cpp/different-ways-to-initialize-an-unordered_map-in-cpp/
+	https://www.geeksforgeeks.org/cpp/traversing-a-map-or-unordered_map-in-cpp-stl/
 */
 #include <iostream>
 #include <fstream>
@@ -20,7 +21,7 @@ int main()
 	ifstream file("data.txt");
 	cm.loadData(file);
 	cm.printPersonMap();
-	cm.printAllParticipants();
+	//cm.printAllParticipants();
 	cm.addPerson("Someone");
 	cm.addPerson("Sabrina Carpenter");
 	Person* p = cm.getPersonObject("Someone");

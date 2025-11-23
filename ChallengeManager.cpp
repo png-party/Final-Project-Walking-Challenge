@@ -1,16 +1,16 @@
 /*
-Nicole Sirbu, Nicolas Grant, Ramon Aguilera
+Christiandior Falucho, Nicole Sirbu, Mohamed Ziq, Nicholas Donaldson
 CMPR 131 - Fall 2025
-October 26th, 2025
-Final Project #1
+November 22nd, 2025
+Final Project #2
 Collaboration:
-	https://www.geeksforgeeks.org/cpp/how-to-read-from-a-file-in-cpp/
-	https://www.hlsl.co.uk/blog/2017/12/1/c-noexcept-and-move-constructors-effect-on-performance-in-stl-containers
-	https://www.geeksforgeeks.org/cpp/if-memory-allocation-using-new-is-failed-in-c-then-how-it-should-be-handled/
+	https://en.cppreference.com/w/cpp/container/unordered_map.html
+	https://en.cppreference.com/w/cpp/utility/pair.html
+	https://www.geeksforgeeks.org/cpp/different-ways-to-initialize-an-unordered_map-in-cpp/
+	https://www.geeksforgeeks.org/cpp/traversing-a-map-or-unordered_map-in-cpp-stl/
 */
 #include "ChallengeManager.h"
 #include "Person.h"
-
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -52,7 +52,6 @@ void ChallengeManager::loadData(ifstream& file)
 				{
 					userId = stoi(s.substr(0, i));
 					s = s.substr(i + 1, s.length() - i);
-					
 					i = 0;
 					field++;
 				}
@@ -66,16 +65,19 @@ void ChallengeManager::loadData(ifstream& file)
 						/* Insert a person object into the unordered map,
 						 * using their name as the key to generate the position.
 						 *
-						 * The .insert() method returns an iterator which has a pair
-						 * object  with two 
-						 * Set the Person* pointer to hold the memory address of the
+						 * The .insert() method returns a pair object with two variables,
+						 * the first is the iterator pointing to the key-value
+						 * the second is a boolean indicating if it was successful
+						 *
+						 * If second is true, then set the Person* pointer to hold the memory address of the
 						 * value of the person object that was just created
 						 */
-						p = &personMap.insert({name, Person(name, userId) }).first->second;
-						
-						//Modify the person object's instance variables with the data we collected
-						//if (insertedKeyValue) p = insertedKeyValue.first->second;
-						//else break;
+						auto temp = personMap.insert({ name, Person(name, userId) });
+						if (!temp.second) {
+							cout << "\n==>Failed to insert \"" << name << ",\" participant might be a duplicate" << endl;
+							continue; //Skip the rest of the iteration if it fails
+						}
+						p = &temp.first->second; //Otherwise keep going and store the memory address of the person object
 					}
 					i = 0;
 					field++;
@@ -127,35 +129,14 @@ void ChallengeManager::loadData(ifstream& file)
 				}
 			}
 		} 
-		if (Node* newUser = new (nothrow) Node(*p))
-		{
-			allParticipants.addNode(newUser);
-		}
-		else {
-			cout << "Memory allocation failed!" << endl;
-			break;
-		}
-	
 	}
-}
-
-void ChallengeManager::createPerson(const string& name)
-{
-	cout << "Creating participant \"" << name << "\"..." << endl;
-	if (Node* newUser = new (nothrow) Node(Person(name, lastId)))
-	{
-		allParticipants.addNode(newUser);
-		lastId++;
-	}
-	else cout << "Memory allocation failed!" << endl;
-
 }
 
 void ChallengeManager::addPerson(const string& name)
 {
 	cout << "Adding participant \"" << name << "\"..." << endl;
 
-	/* returns a pair: {first = iterator, second = boolean for success} */
+	/* Returns a pair: {first = key-value iterator, second = boolean for success} */
 	auto inserted = personMap.insert({name, Person(name, lastId)});
 	lastId++;
 	if (inserted.second) cout << "==>Participant \"" << name << "\" was successfully added!" << endl;
@@ -198,7 +179,7 @@ void ChallengeManager::deleteCity(const string& name)
 		//Access person object within the pair
 		Person* p = &current.second;
 		//Only modify people who have indexes affected by removing the city
-		if ((int)p->getList().size() - 1 >= cityIndex)
+		if ((int )p->getList().size() - 1 >= cityIndex)
 		{
 			//Update their total miles
 			p->setTotalMiles(p->getTotalMiles() - p->getList()[cityIndex]);
@@ -211,67 +192,17 @@ void ChallengeManager::deleteCity(const string& name)
 
 }
 
-void ChallengeManager::createCity(const string& name)
-{
-	cout << "Creating city \"" << name << "\"..." << endl;
-	if (getCityIndex(name) == -1) allCities.push_back(name);
-	else cout << "That city already exists!" << endl;
-}
-
-void ChallengeManager::removePerson(const string& name)
-{
-	cout << "Removing \"" << name << "\"..." << endl;
-	if (allParticipants.removeNode(name)) cout << "==>Participant \"" << name << "\" was found and removed!" << endl;
-	else cout << "==>Participant \"" << name << "\" could not be found and removed" << endl;
-	allParticipants.removeNode(name);
-}
-
-bool ChallengeManager::removeCity(const string& cityName)
-{
-	cout << "Removing \"" << cityName << "\"..." << endl;
-	int i = getCityIndex(cityName);
-	if (i == -1) //Exit if index wasn't found
-	{
-		cout << "==>Neighborhood \"" << cityName << "\" was not found!" << endl;
-		return false;
-	}
-
-	//Remove city from people's data
-	Node* current = allParticipants.getFirst();
-	if (current)
-	{
-		while (current)
-		{
-			Person* p = current->getData();
-			//Only modify people who have indexes affected by removing the city
-			if ((int)p->getList().size() - 1 >= i)
-			{
-				//Update their total miles
-				p->setTotalMiles(p->getTotalMiles() - p->getList()[i]);
-				//Remove index from their list
-				p->getList().erase(p->getList().begin() + i);
-			}
-			current = current->getNext();
-		}
-	}
-	
-	//Remove entry from list of cities
-	allCities.erase(allCities.begin() + i);
-	cout << "==>Neighborhood \"" << cityName << "\" was found and removed!" << endl;
-	return true;
-} 
-
 void ChallengeManager::clearParticipants()
 {
 	cout << "Clearing all participants..." << endl;
-	allParticipants.clear();
+	//allParticipants.clear();
 }
 
 void ChallengeManager::getPersonStatsMap(const string& name)
 {
 	auto p = personMap.find(name);
 	if (p == personMap.end()) cout << "==>Requested person wasn't found!" << endl;
-	p->second.printStats(allCities);
+	else p->second.printStats(allCities);
 }
 
 void ChallengeManager::printPersonMap() const
@@ -308,7 +239,6 @@ bool ChallengeManager::logWalk(const string& personName, const string& cityName,
 	}
 	p->second.recordWalk(i, miles, allCities);
 	return true;
-
 } 
 
 void ChallengeManager::printPersonWalks(const string& personName) const
@@ -324,12 +254,14 @@ void ChallengeManager::printPersonWalks(const string& personName) const
 
 void ChallengeManager::getPersonStats(const string& name) const
 {
-	Person* p = getPerson(name);
-	p->printStats(allCities);
+	auto temp = personMap.find(name);
+	if (temp == personMap.end()) cout << "Participant was not found!" << endl;
+	temp->second.printStats(allCities);
 } 
 
 void ChallengeManager::printMostActive() const
 {
+	/*
 	cout << "Looking for most active participant..." << endl;
 	Person* p = allParticipants.getFirst()->getData();
 	Node* current = allParticipants.getFirst();
@@ -349,38 +281,15 @@ void ChallengeManager::printMostActive() const
 	}
 	if (p->getTotalMiles() >= 0) cout << "==>Participant " << p->getName() << " has walked the most miles with a total of " << p->getTotalMiles() <<
 		" miles walked!" << endl;
-	else cout << "==>No one has recorded a walk longer than 0 miles yet!" << endl;
+	else cout << "==>No one has recorded a walk longer than 0 miles yet!" << endl;*/
 } 
-
-void ChallengeManager::printAllParticipants() const
-{
-	cout << "\n======================Today's Walking Challenge=====================" << endl;
-	int i = 1;
-	Node* current = allParticipants.getFirst();
-	if (!current) cout << "No one has participated in the challenge yet!" << endl;
-	else
-	{
-		while (current)
-		{
-			cout << "\t" << i << ".) " << current << endl;
-			i++;
-			current = current->getNext();
-		}
-	}
-	cout << "====================================================================" << endl;
-}
 
 int ChallengeManager::getCityIndex(const string& name) const
 {
-	for (int i = 0; i < (int)allCities.size(); i++)
+	for (int i = 0; i < (int) allCities.size(); i++)
 	{
 		if (allCities[i] == name) return i;
 	}
 	return -1;
-}
-
-Person* ChallengeManager::getPerson(const string& name) const
-{
-	return allParticipants.findNode(name)->getData();
 }
 
