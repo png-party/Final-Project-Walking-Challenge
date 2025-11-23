@@ -261,27 +261,18 @@ void ChallengeManager::getPersonStats(const string& name) const
 
 void ChallengeManager::printMostActive() const
 {
-	/*
-	cout << "Looking for most active participant..." << endl;
-	Person* p = allParticipants.getFirst()->getData();
-	Node* current = allParticipants.getFirst();
-	if (!p || !current)
-	{
-		cout << "==>No one has participated in the challenge yet!" << endl;
-		return;
-	}
-	
-	while (current)
-	{
-		if (current->getData()->getTotalMiles() > p->getTotalMiles())
+	int most_active_total_miles = 0;
+	string most_active_person = "";
+	for(const auto& person: personMap){
+		if(person.second.getTotalMiles() > most_active_total_miles)
 		{
-			p = current->getData();
+			most_active_total_miles = person.second.getTotalMiles();
+			most_active_person = person.first;
+
 		}
-		current = current->getNext();
 	}
-	if (p->getTotalMiles() >= 0) cout << "==>Participant " << p->getName() << " has walked the most miles with a total of " << p->getTotalMiles() <<
-		" miles walked!" << endl;
-	else cout << "==>No one has recorded a walk longer than 0 miles yet!" << endl;*/
+	cout << "The most active person is: " << most_active_person << endl;
+	cout << "Total miles of: " << most_active_total_miles;
 } 
 
 int ChallengeManager::getCityIndex(const string& name) const
