@@ -18,6 +18,31 @@ Collaboration:
 #include <unordered_map>
 
 using namespace std;
+
+/* ==CHANGES==
+ * LinkedList allParticipants --> unordered_map<string, Person> personMap
+ *
+ * All of the participants are now stored in an unordered map instead of a
+ * linked list. This greatly improves the performance of our program especially
+ * since unordered maps prevent inserting duplicate values, no longer requiring
+ * traversing the entire list to check for duplicates before inserting.
+ *
+ * In addition, many methods rely on that searching like getting a person's stats,
+ * logging a walk for them, etc, on average now take O(1).
+ *
+ *
+ * The allCities vector is still a vector instead of a map.
+ * Though it's less efficient, it is necessary because the cities must be stored in
+ * ordered indexes.
+ * We also couldn't use a key-value approach where the key = string city name
+ * and value = int city index either to make allCities a map.
+ * Since a participant's walking data is stored in a vector of doubles, they use the city index
+ * as a key to retrieve a value: the name of the city corresponding to their vector's index where
+ * they logged a walk to do things like printing their walks.
+ * Since some user methods for Challenge Manager also require searching for a city by name,
+ * like adding a city or logging a walk, it can't be represented as a key-value pair because
+ * Person uses indexes as a key and names as the value and Challenge Manager uses the names
+ * as a key and the city indexes as the values. */
 ChallengeManager::ChallengeManager()
 {
 	cout << "Challenge Manager created." << endl;
@@ -62,7 +87,7 @@ void ChallengeManager::loadData(ifstream& file)
 					s = s.substr(i, s.length() - i + 1);
 					if (field == 3)
 					{
-						/* Insert a person object into the unordered map,
+						/* Insert a person object into the unordered map
 						 * using their name as the key to generate the position.
 						 *
 						 * The .insert() method returns a pair object with two variables,
@@ -187,7 +212,9 @@ void ChallengeManager::deleteCity(const string& name)
 		cout << "==>City \"" << name << "\" was not found!" << endl;
 		return;
 	}
-	for (auto current : personMap)
+	/* Use a reference to avoid unnecessary copies of the pair, but don't make
+	 * it const since we need to actually modify the Person objects */
+	for (auto& current : personMap)
 	{
 		//Access person object within the pair
 		Person* p = &current.second;
@@ -216,12 +243,13 @@ void ChallengeManager::clearParticipants()
 		cout << "==>The unordered map is already empty.\n";
 	}else{
 		personMap.clear();
+		cout << "==>All participants have been deleted.\n";
 	}
 }
 
 /* Since unordered maps are good for searching quickly,
  * getting a person's stats now takes O(1) on average */
-void ChallengeManager::getPersonStats(const string& name)
+void ChallengeManager::getPersonStats(const string& name) const
 {
 	auto p = personMap.find(name);
 	if (p == personMap.end()) cout << "==>Requested person wasn't found!" << endl;
@@ -230,19 +258,21 @@ void ChallengeManager::getPersonStats(const string& name)
 
 void ChallengeManager::printAllPersons() const
 {
-	cout << "\n======================Today's Walking Challenge=====================" << endl;
-	int count = 1;
-	for (auto i : personMap)
+	cout << "\n======================Today's Walking Challenge=====================\n" << endl;
+	if (!personMap.empty())
 	{
-		cout << "\t" << count << ".) " << i.second << endl;
-		count++;
+		int count = 1;
+		/* Use a reference to the pair so auto doesn't make unnecessary
+		 * copies of the object
+		 * Make it const to prevent accidentally modifying participants */
+		for (const auto& i : personMap)
+		{
+			cout << "\t" << count << ".) " << i.second << endl;
+			count++;
+		}
 	}
+	else cout << "\t    No one has participated in the challenge yet!" << endl;
 	cout << "====================================================================" << endl;
-}
-
-Person* ChallengeManager::getPersonObject(const string& name)
-{
-	return &personMap.find(name)->second;
 }
 
 /* Logging a walk is now faster since getting the relevant person now takes O(1) on
@@ -278,6 +308,11 @@ void ChallengeManager::printPersonWalks(const string& personName) const
 
 void ChallengeManager::printMostActive() const
 {
+
+	unordered_map<string, int> myMap = { {"Apple", 3}, {"Pear", 4}, {"Pumpkin", 12} };
+	
+
+
 	cout << "Finding the most active participant..." << endl;
 	double most_active_total_miles = 0;
 	string most_active_person = "";

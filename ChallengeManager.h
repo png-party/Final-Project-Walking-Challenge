@@ -29,9 +29,8 @@ public:
 	void addCity(const string& name);
 	void deletePerson(const string& name);
 	void deleteCity(const string& name);
-	void getPersonStats(const string& name);
+	void getPersonStats(const string& name) const;
 	void printAllPersons() const;
-	Person* getPersonObject(const string& name);
 
 	//To Do:
 	void printMostActive() const;
@@ -40,7 +39,6 @@ public:
 
 	bool logWalk(const string& personName, const string& cityName, double miles);
 	void printPersonWalks(const string& personName) const;
-	void getPersonStats(const string& name) const;
 
 private:
 	unordered_map<string, Person> personMap;

@@ -81,7 +81,9 @@ void Person::printPersonList(const vector<string>& allCities) const
 		cout << name << " has not logged any walks! " << endl;
 		return;
 	}
-	cout << "\n===" << name << "'s Walking Data===" << endl;
+	string title = "====" + name + "'s Walking Data====";
+	cout << title << endl;
+	string endBar(title.length(), '=');
 	cout << "" << totalMiles << " Total Miles Logged:" << endl;
 	int countCity = 1; //Use this to display numbers correctly, because i might count cities with zero miles
 	for (int i  = 0; i < (int) personList.size(); i++)
@@ -92,11 +94,12 @@ void Person::printPersonList(const vector<string>& allCities) const
 			countCity++;
 		}
 	}
+	cout << endBar << endl;
 }
 
 void Person::printStats(const vector<string>& allCities) const
 {
-	string title = "====" + name + "'s statistics====";
+	string title = "==================" + name + "'s Statistics==================";
 	string endBar(title.length(), '=');
 	cout << title << endl;
 	cout << "ID:" << userId << "\nTotal miles walked: " << totalMiles << endl;
@@ -107,15 +110,21 @@ void Person::printStats(const vector<string>& allCities) const
 		for (int i = 0; i < (int)personList.size(); i++)
 		{
 			if (personList[i] > personList[largestIndex])  largestIndex = i;
-			//Avoid overwriting the smallest index with any zeroes
-			else if (personList[i] < personList[smallestIndex] && personList[i] != 0) smallestIndex = i;
+			/* Avoid overwriting the smallest index with any zeroes
+			 * Update it to the current index if smallest is zero by default
+			 * the current one is actually smaller */
+			if (personList[i] != 0 && (personList[smallestIndex] == 0 || personList[i] < personList[smallestIndex])) smallestIndex = i;
 		}
 
 		//Don't print result if the shortest/longest walks were zero miles
-		if (personList[smallestIndex] > 0 && personList[largestIndex] > 0)
+		if (personList[largestIndex] > 0)
 		{
-			cout << name << " has walked the most miles in " << allCities[largestIndex] << " with a total of " << personList[largestIndex] << " miles recorded\nIn addition, " << name << " has walked the least miles in " << allCities[smallestIndex] <<
-				" with a total of " << personList[smallestIndex] << " miles recorded" << endl;
+			cout << name << " has walked the most miles in " << allCities[largestIndex] << " with a total of " << personList[largestIndex] << " miles recorded." << endl;
+		}
+		if (personList[smallestIndex] > 0 && personList[smallestIndex] != personList[largestIndex])
+		{
+			cout << "In addition, " << name << " has walked the least miles in " << allCities[smallestIndex] <<
+				" with a total of " << personList[smallestIndex] << " miles recorded." << endl;
 		}
 	}
 	
@@ -133,7 +142,7 @@ void Person::recordWalk(int cityIndex, double milesWalked, const vector<string>&
 	if ((int) personList.size() <= cityIndex) {
 		personList.resize(cityIndex + 1);
 	}
-	personList[cityIndex] = milesWalked;
+	personList[cityIndex] += milesWalked;
 	totalMiles += milesWalked;
 	
 	if (milesWalked == 1) cout << "\n==>Recorded " << name << "'s walk of " << milesWalked << " mile in " + allCities[cityIndex] << endl;
