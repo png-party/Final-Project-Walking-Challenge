@@ -29,8 +29,8 @@ public:
 	void addCity(const string& name);
 	void deletePerson(const string& name);
 	void deleteCity(const string& name);
-	void getPersonStatsMap(const string& name);
-	void printPersonMap() const;
+	void getPersonStats(const string& name);
+	void printAllPersons() const;
 	Person* getPersonObject(const string& name);
 
 	//To Do:

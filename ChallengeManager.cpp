@@ -24,10 +24,6 @@ ChallengeManager::ChallengeManager()
 	lastId = 151;
 }
 
-/* loadData() parses the text file and inserts a person object into the unordered map
- * With unordered maps, the program automatically checks if duplicates exist WHILE inserting
- * This now takes O(1) on average instead of taking O(n) to check all participants for
- * duplicates BEFORE inserting */
 void ChallengeManager::loadData(ifstream& file)
 {
 	if (!file.is_open())
@@ -199,17 +195,22 @@ void ChallengeManager::deleteCity(const string& name)
 void ChallengeManager::clearParticipants()
 {
 	cout << "Clearing all participants..." << endl;
-	//allParticipants.clear();
+	if (personMap.empty())
+	{
+		cout << "The unordered map is already empty.\n";
+	}else{
+		personMap.clear();
+	}
 }
 
-void ChallengeManager::getPersonStatsMap(const string& name)
+void ChallengeManager::getPersonStats(const string& name)
 {
 	auto p = personMap.find(name);
 	if (p == personMap.end()) cout << "==>Requested person wasn't found!" << endl;
 	else p->second.printStats(allCities);
 }
 
-void ChallengeManager::printPersonMap() const
+void ChallengeManager::printAllPersons() const
 {
 	cout << "\n======================Today's Walking Challenge=====================" << endl;
 	int count = 1;
