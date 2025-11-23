@@ -24,6 +24,10 @@ ChallengeManager::ChallengeManager()
 	lastId = 151;
 }
 
+/* loadData() parses the text file and inserts a person object into the unordered map
+ * With unordered maps, the program automatically checks if duplicates exist WHILE inserting
+ * This now takes O(1) on average instead of taking O(n) to check all participants for
+ * duplicates BEFORE inserting */
 void ChallengeManager::loadData(ifstream& file)
 {
 	if (!file.is_open())
